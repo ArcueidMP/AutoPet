@@ -1,0 +1,21 @@
+{
+  "name": "@autopet/runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "tsc --noEmit -p tsconfig.json",
+    "test": "pnpm typecheck"
+  },
+  "dependencies": {
+    "@autopet/pet-engine": "workspace:*",
+    "@autopet/pet-format": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
