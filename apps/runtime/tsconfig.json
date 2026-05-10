@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "../..",
+    "paths": {
+      "@autopet/pet-engine": ["packages/pet-engine/src/index.ts"],
+      "@autopet/pet-format": ["packages/pet-format/src/index.ts"]
+    }
+  },
+  "include": ["electron.vite.config.ts", "src/**/*.ts", "src/**/*.tsx"]
+}

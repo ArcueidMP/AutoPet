@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "../..",
+    "paths": {
+      "@autopet/pet-format": ["packages/pet-format/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts"]
+}

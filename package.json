@@ -1,0 +1,30 @@
+{
+  "name": "autopet",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AutoPet v0.1 monorepo scaffold.",
+  "scripts": {
+    "dev": "pnpm dev:maker",
+    "dev:maker": "pnpm --filter @autopet/maker dev",
+    "dev:runtime": "pnpm --filter @autopet/runtime dev",
+    "build": "pnpm -r --if-present build",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "lint": "pnpm -r --if-present lint",
+    "test": "pnpm -r --if-present test",
+    "python:check": "pnpm --filter @autopet/image-pipeline typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^33.2.1",
+    "electron-vite": "^3.0.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}
