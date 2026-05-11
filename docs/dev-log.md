@@ -407,3 +407,46 @@ docs/dev-log.md
 ```
 
 Each Codex thread should handle only one small task.
+
+## Stage 2 Summary - v0.1 Pet Manifest Schema and Validator
+
+Date: 2026-05-11
+
+Stage 2 implemented the v0.1 pet manifest schema and validator. This is still
+part of the scaffold / implementation stage and is not a v0.1 release.
+
+Changed files:
+
+```text
+packages/pet-format/src/index.ts
+docs/pet-schema.md
+```
+
+`packages/pet-format` added:
+
+- `PetManifestV010`
+- `PetAnimationStateV010`
+- `PetHitboxV010`
+- `PET_MANIFEST_SCHEMA_VERSION`
+- `EXAMPLE_PET_MANIFEST_V010`
+- `validatePetManifest`
+- `assertPetManifest`
+
+The validator checks `schemaVersion`, required strings, safe relative asset
+paths, positive frame sizes, non-empty states, valid `defaultState` and `next`
+references, animation state values, and optional hitbox bounds.
+
+Verified commands:
+
+```powershell
+corepack pnpm typecheck
+corepack pnpm build
+```
+
+Result:
+
+```text
+Passed
+```
+
+No GitHub push was performed.
