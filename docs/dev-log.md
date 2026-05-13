@@ -2,7 +2,7 @@
 
 ## Current Handoff State
 
-Date: 2026-05-11
+Date: 2026-05-14
 
 AutoPet is still in the v0.1 scaffold / implementation stage. This is not a
 v0.1 release.
@@ -37,12 +37,14 @@ Merged pull requests:
 ```text
 PR #1: Scaffold v0.1 project structure
 PR #2: Add v0.1 pet manifest schema and validator
+PR #3: Add manifest-driven pet-engine player
 ```
 
 Completed stages:
 
 - Stage 1: Initial repository and v0.1 scaffold.
 - Stage 2: v0.1 pet manifest schema and validator.
+- Stage 3: Manifest-driven pet-engine animation/player foundation.
 
 The Stage 2 feature branch has been cleaned up:
 
@@ -84,14 +86,14 @@ docs/pet-schema.md
 Current recommended next task:
 
 ```text
-Stage 3 should focus on making packages/pet-engine consume validated manifests
-from packages/pet-format.
+Stage 4 should add a small sample pet package or example manifest/runtime
+fixture for future Runtime loading and smoke testing.
 ```
 
-Stage 3 should not implement image import, spritesheet generation, package
-export, Maker UI changes, Runtime package loading UI, blinking, waving, Live2D,
-image-to-video, cloud APIs, plugin systems, multi-pet support, system tray, or
-complex CV.
+Stage 4 should not implement image import, background removal, real spritesheet
+generation, Maker export flow, complex Runtime package picker UI, blinking,
+waving, Live2D, image-to-video, cloud APIs, plugin systems, multi-pet support,
+system tray, or complex CV.
 
 ---
 
@@ -484,6 +486,76 @@ feature branch locally and on GitHub.
 
 ---
 
+## Stage 3 Summary - Manifest-Driven Pet-Engine Player
+
+Date: 2026-05-14
+
+Stage 3 implemented a manifest-driven animation/player foundation in
+`packages/pet-engine`. This is still part of the scaffold / implementation
+stage and is not a v0.1 release.
+
+Stage 3 branch:
+
+```text
+feat/pet-engine-manifest-player
+```
+
+Status:
+
+```text
+Merged into main.
+```
+
+Changed files in Stage 3:
+
+```text
+packages/pet-engine/src/index.ts
+```
+
+### Added in packages/pet-engine
+
+`packages/pet-engine` now consumes already-validated `PetManifestV010` data from
+`@autopet/pet-format` instead of duplicating manifest validation.
+
+The player starts from `manifest.defaultState` with frame index `0` and exposes
+a small deterministic API for animation state progression.
+
+The snapshot data includes:
+
+- current state name
+- zero-based frame index
+- active manifest state row
+- state frame count, fps, loop flag, and optional next state
+- manifest frame width and frame height
+- computed sprite frame rectangle:
+  - `x = frameIndex * frameWidth`
+  - `y = row * frameHeight`
+  - `width = frameWidth`
+  - `height = frameHeight`
+
+Animation advancement is driven by elapsed milliseconds using the active state's
+`frames`, `fps`, `loop`, and optional `next` values.
+
+Stage 3 did not render anything, load files from disk, or implement Runtime
+package loading UI.
+
+### Stage 3 verification
+
+Verified commands:
+
+```powershell
+corepack pnpm typecheck
+corepack pnpm build
+```
+
+Result:
+
+```text
+Passed
+```
+
+---
+
 ## Important Project Boundaries
 
 The v0.1 scope remains intentionally small.
@@ -499,6 +571,7 @@ Included in v0.1:
 - Windows-first development
 - Runtime-safe pet manifest validation
 - Small documented `pet.json` schema
+- Manifest-driven pet-engine animation/player foundation
 
 Not included in v0.1:
 
@@ -538,7 +611,7 @@ Git produced repeated line-ending warnings such as:
 LF will be replaced by CRLF the next time Git touches it
 ```
 
-This was not fixed during Stage 1 or Stage 2.
+This was not fixed during Stage 1, Stage 2, or Stage 3.
 
 This is not currently blocking because:
 
@@ -559,40 +632,38 @@ This cleanup should be kept separate from feature work.
 
 ---
 
-## Recommended Stage 3 Task
+## Recommended Stage 4 Task
 
-Stage 3 should focus on `packages/pet-engine`, not on image generation yet.
+Stage 4 should focus on adding a small sample pet package or example
+manifest/runtime fixture for future Runtime loading and smoke testing.
 
 Recommended task:
 
 ```text
-Make packages/pet-engine consume validated pet manifests from packages/pet-format.
+Add a small sample pet package or example manifest/runtime fixture.
 ```
 
-Stage 3 should use the Stage 2 manifest format and validator as the source of
-truth.
+The sample should use the Stage 2 manifest format and be compatible with the
+Stage 3 pet-engine player.
 
-Expected Stage 3 direction:
+Expected Stage 4 direction:
 
-- Import the relevant types from `@autopet/pet-format`.
-- Accept a validated `PetManifestV010`.
-- Initialize the player from `manifest.defaultState`.
-- Use state definitions from `manifest.states`.
-- Use `row`, `frames`, `fps`, `loop`, and optional `next` to drive simple frame
-  progression.
-- Keep behavior deterministic and small.
-- Avoid duplicating the manifest validator inside `pet-engine`.
-- Add typecheck/build coverage.
-- Add tests only if the repository already has a test setup.
+- Add a minimal checked-in example manifest or fixture suitable for future
+  Runtime loading and smoke testing.
+- Keep fixture data small and deterministic.
+- Reuse `@autopet/pet-format` validation instead of adding a new schema path.
+- Avoid real image generation or package export behavior.
+- Add typecheck/build coverage if TypeScript files are touched.
+- Add tests only if the repository already has a suitable test setup.
 
-Stage 3 should not implement:
+Stage 4 should not implement:
 
 - image import
 - background removal
-- spritesheet generation
-- pet package export
+- real spritesheet generation
+- Maker export flow
 - Maker UI changes
-- Runtime package loading UI
+- complex Runtime package picker UI
 - desktop window behavior changes
 - blinking
 - waving
@@ -604,16 +675,16 @@ Stage 3 should not implement:
 - system tray
 - complex CV
 
-Suggested Stage 3 branch:
+Suggested Stage 4 branch:
 
 ```powershell
 cd D:\dev\AutoPet
 git switch main
 git pull --ff-only origin main
-git switch -c feat/pet-engine-manifest-player
+git switch -c feat/sample-pet-fixture
 ```
 
-Suggested Stage 3 Codex prompt:
+Suggested Stage 4 Codex prompt:
 
 ```text
 Read README.md, AGENTS.md, docs/dev-log.md, and docs/pet-schema.md first.
@@ -625,7 +696,9 @@ D:\dev\AutoPet
 Current state:
 - PR #1 scaffold has been merged into main.
 - PR #2 pet manifest schema and validator has been merged into main.
-- main contains the v0.1 scaffold plus the v0.1 pet manifest schema.
+- Stage 3 manifest-driven pet-engine player has been merged into main.
+- main contains the v0.1 scaffold, the v0.1 pet manifest schema, and the
+  manifest-driven pet-engine player foundation.
 - corepack pnpm typecheck passes.
 - corepack pnpm build passes.
 - This is not a v0.1 release yet; it is still a scaffold / implementation stage.
@@ -634,37 +707,30 @@ Before changing files:
 1. Run:
    git status
    git branch --show-current
-2. Confirm you are on the Stage 3 feature branch.
+2. Confirm you are on the Stage 4 feature branch.
 3. Briefly explain your implementation plan.
 
 Task:
-Implement Stage 3 only: make packages/pet-engine consume validated pet manifests
-from packages/pet-format.
+Implement Stage 4 only: add a small sample pet package or example
+manifest/runtime fixture for future Runtime loading and smoke testing.
 
 Requirements:
-- Keep the task small and limited to packages/pet-engine unless a tiny export
-  adjustment is required.
-- Use the v0.1 manifest types from @autopet/pet-format.
-- Do not duplicate the manifest validator in pet-engine.
-- Add or update a small deterministic animation/player API that can:
-  - initialize from a PetManifestV010
-  - start at manifest.defaultState
-  - expose the current state name
-  - expose the current frame index
-  - expose the current row from the active manifest state
-  - advance frames according to frames, fps, loop, and optional next
-  - switch states by name
-- Keep non-looping state behavior simple and documented.
+- Keep the task small and focused on a fixture or example manifest.
+- Use the v0.1 manifest schema from @autopet/pet-format.
+- Do not add real image import, export, or spritesheet generation.
+- Do not add complex Runtime package loading UI.
+- Keep fixture data deterministic and suitable for later smoke tests.
 - Add typecheck/build coverage.
 - Add tests only if the repository already has a test setup.
 - Do not introduce a new test framework just for this task.
 
 Do not implement:
 - image import
-- spritesheet generation
-- pet package export
+- background removal
+- real spritesheet generation
+- Maker export flow
 - Maker UI changes
-- Runtime package loading behavior
+- complex Runtime package picker UI
 - Electron window changes
 - blinking
 - waving
@@ -682,7 +748,7 @@ corepack pnpm build
 
 Then summarize:
 - files changed
-- pet-engine behavior implemented
+- fixture/example behavior added
 - commands run and results
 - any remaining risks or follow-up tasks
 
