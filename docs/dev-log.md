@@ -102,6 +102,35 @@ Stage 5 should not implement background removal, rembg, Maker UI, Runtime UI,
 Electron window changes, blinking, waving, Live2D, image-to-video, cloud APIs,
 plugin systems, multi-pet support, system tray, or complex CV.
 
+Stage 5 local implementation note:
+
+```text
+Branch: feat/image-pipeline-package-mvp
+Status: Implemented locally in packages/image-pipeline.
+Not staged, committed, pushed, or opened as a PR by Codex.
+```
+
+Stage 5 adds the Pillow-only transparent PNG package MVP: alpha-preserving
+normalization, deterministic transform frames, `spritesheet.png`, `pet.json`,
+`preview.gif`, a small module CLI, and package-local unittest coverage. It does
+not add rembg, background removal, Maker UI, Runtime changes, or generated
+sample outputs.
+
+Stage 5 verification during implementation:
+
+```powershell
+.\.venv\Scripts\python.exe -m compileall packages\image-pipeline\autopet_image_pipeline
+.\.venv\Scripts\python.exe -m unittest discover -s packages\image-pipeline
+corepack pnpm typecheck
+corepack pnpm build
+```
+
+Result:
+
+```text
+Passed
+```
+
 ---
 
 ## Stage 1 Summary - Initial Repository and v0.1 Scaffold
