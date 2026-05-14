@@ -1,25 +1,58 @@
 # AutoPet Image Pipeline
 
-Placeholder Python package for the local v0.1 image-to-pet pipeline.
+Local Python package for the Stage 5 v0.1 transparent PNG package pipeline.
 
-Baseline setup from this directory:
+The reliable v0.1 path is a transparent PNG with a useful alpha background. The
+pipeline uses Pillow only, preserves alpha, trims the alpha bounding box,
+normalizes the subject into a `256 x 256` canvas, generates deterministic
+transform-only animation frames, and writes a local pet package folder.
+
+`rembg` and background removal are not included in Stage 5. Opaque images are
+rejected with a helpful error instead of attempting automatic background
+removal.
+
+## Setup
+
+From the repository root, use the project-local virtual environment:
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r packages\image-pipeline\requirements.txt
 ```
 
-Optional local background removal can be installed later:
+The required dependency file installs Pillow only.
+
+## CLI
+
+When running from the monorepo without installing the package, run the module
+from this package directory:
 
 ```powershell
-python -m pip install -r requirements-rembg.txt
+cd packages\image-pipeline
+..\..\.venv\Scripts\python.exe -m autopet_image_pipeline --input <transparent-png> --output <output-folder> --name "My Pet"
 ```
 
-TODO(v0.1):
+If the package is installed into the active environment, the same module command
+can be run from any directory where Python can import `autopet_image_pipeline`.
 
-- Preserve transparent PNG alpha.
-- Trim transparent or empty bounds.
-- Normalize the subject into a 256 x 256 canvas.
-- Generate transform-only animation frames.
-- Assemble `spritesheet.png`, `preview.gif`, and `pet.json`.
+## Output Package
+
+```text
+output-folder/
+  pet.json
+  spritesheet.png
+  preview.gif
+```
+
+Generated assets use package-relative paths in `pet.json`:
+
+- `sprite`: `spritesheet.png`
+- `preview`: `preview.gif`
+
+The spritesheet is `2048 x 1280`, arranged as eight `256 x 256` columns by five
+rows:
+
+- row 0: `idle`
+- row 1: `bounce`
+- row 2: `click`
+- row 3: `sleep`
+- row 4: `drag`

@@ -6,6 +6,6 @@
     "dev": "python -m autopet_image_pipeline",
     "typecheck": "python -m compileall autopet_image_pipeline",
     "lint": "python -m compileall autopet_image_pipeline",
-    "test": "python -m compileall autopet_image_pipeline"
+    "test": "python -m unittest discover -s ."
   }
 }
