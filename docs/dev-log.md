@@ -22,14 +22,14 @@ https://github.com/ArcueidMP/AutoPet
 Current branch:
 
 ```text
-main
+feat/sample-pet-fixture
 ```
 
 Current Git state:
 
 ```text
-main is up to date with origin/main.
-Working tree is clean.
+Stage 4 fixture changes are present locally on feat/sample-pet-fixture.
+Not pushed to GitHub in this thread.
 ```
 
 Merged pull requests:
@@ -45,6 +45,8 @@ Completed stages:
 - Stage 1: Initial repository and v0.1 scaffold.
 - Stage 2: v0.1 pet manifest schema and validator.
 - Stage 3: Manifest-driven pet-engine animation/player foundation.
+- Stage 4: Checked-in sample pet fixture for future Runtime loading and smoke
+  testing.
 
 The Stage 2 feature branch has been cleaned up:
 
@@ -59,13 +61,13 @@ Deleted locally.
 Deleted on GitHub.
 ```
 
-Latest verification on `main`:
+Latest verification after Stage 4:
 
 ```powershell
-git status
-git log --oneline --decorate --max-count=5
+corepack pnpm --filter @autopet/pet-format test
 corepack pnpm typecheck
 corepack pnpm build
+PNG dimension check: 2048 x 1280
 ```
 
 Result:
@@ -86,14 +88,13 @@ docs/pet-schema.md
 Current recommended next task:
 
 ```text
-Stage 4 should add a small sample pet package or example manifest/runtime
-fixture for future Runtime loading and smoke testing.
+Stage 5 should implement Python transparent PNG normalization plus a
+deterministic spritesheet/package MVP.
 ```
 
-Stage 4 should not implement image import, background removal, real spritesheet
-generation, Maker export flow, complex Runtime package picker UI, blinking,
-waving, Live2D, image-to-video, cloud APIs, plugin systems, multi-pet support,
-system tray, or complex CV.
+Stage 5 should not implement background removal, rembg, Maker UI, Runtime UI,
+Electron window changes, blinking, waving, Live2D, image-to-video, cloud APIs,
+plugin systems, multi-pet support, system tray, or complex CV.
 
 ---
 
@@ -556,6 +557,90 @@ Passed
 
 ---
 
+## Stage 4 Summary - Sample Pet Fixture
+
+Date: 2026-05-14
+
+Stage 4 added a small checked-in sample pet fixture for future Runtime loading
+and smoke testing. This is still part of the scaffold / implementation stage
+and is not a v0.1 release.
+
+Stage 4 branch:
+
+```text
+feat/sample-pet-fixture
+```
+
+Status:
+
+```text
+Completed locally.
+Not pushed to GitHub in this thread.
+```
+
+Changed files in Stage 4:
+
+```text
+examples/sample-pet/pet.json
+examples/sample-pet/spritesheet.png
+examples/sample-pet/README.md
+packages/pet-format/test/sample-pet-fixture.test.mjs
+packages/pet-format/package.json
+```
+
+### Added fixture
+
+`examples/sample-pet` now contains a deterministic sample fixture using the
+v0.1 pet manifest schema. The fixture includes:
+
+- `pet.json` with schema version `"0.1.0"`, `spritesheet.png`, `256 x 256`
+  frames, default state `idle`, the recommended v0.1 states, and a simple
+  `192 x 192` hitbox.
+- `spritesheet.png`, a transparent `2048 x 1280` sprite sheet arranged as
+  `8` columns by `5` rows of `256 x 256` frames.
+- `README.md` documenting that the fixture is deterministic placeholder data
+  for Runtime loading and smoke tests, not an output of the image pipeline yet.
+
+The fixture does not include `preview.gif`.
+
+### Added validation coverage
+
+`packages/pet-format/test/sample-pet-fixture.test.mjs` validates
+`examples/sample-pet/pet.json` with the existing `@autopet/pet-format`
+validator.
+
+The `packages/pet-format` test script now uses Node built-in tests:
+
+```json
+"test": "pnpm build && node --test test/*.test.mjs"
+```
+
+No new npm dependencies or test framework were added.
+
+### Stage 4 verification
+
+Verified commands:
+
+```powershell
+corepack pnpm --filter @autopet/pet-format test
+corepack pnpm typecheck
+corepack pnpm build
+```
+
+PNG dimension check:
+
+```text
+2048 x 1280
+```
+
+Result:
+
+```text
+Passed
+```
+
+---
+
 ## Important Project Boundaries
 
 The v0.1 scope remains intentionally small.
@@ -572,6 +657,7 @@ Included in v0.1:
 - Runtime-safe pet manifest validation
 - Small documented `pet.json` schema
 - Manifest-driven pet-engine animation/player foundation
+- Checked-in sample pet fixture for future Runtime loading and smoke testing
 
 Not included in v0.1:
 
@@ -611,7 +697,7 @@ Git produced repeated line-ending warnings such as:
 LF will be replaced by CRLF the next time Git touches it
 ```
 
-This was not fixed during Stage 1, Stage 2, or Stage 3.
+This was not fixed during Stage 1, Stage 2, Stage 3, or Stage 4.
 
 This is not currently blocking because:
 
@@ -632,128 +718,30 @@ This cleanup should be kept separate from feature work.
 
 ---
 
-## Recommended Stage 4 Task
+## Recommended Stage 5 Task
 
-Stage 4 should focus on adding a small sample pet package or example
-manifest/runtime fixture for future Runtime loading and smoke testing.
+Stage 5 should focus on the Python transparent PNG normalization plus
+deterministic spritesheet/package MVP.
 
 Recommended task:
 
 ```text
-Add a small sample pet package or example manifest/runtime fixture.
+Implement Python transparent PNG normalization and deterministic
+spritesheet/package generation for the minimal v0.1 pipeline.
 ```
 
-The sample should use the Stage 2 manifest format and be compatible with the
-Stage 3 pet-engine player.
+Expected Stage 5 direction:
 
-Expected Stage 4 direction:
-
-- Add a minimal checked-in example manifest or fixture suitable for future
-  Runtime loading and smoke testing.
-- Keep fixture data small and deterministic.
-- Reuse `@autopet/pet-format` validation instead of adding a new schema path.
-- Avoid real image generation or package export behavior.
-- Add typecheck/build coverage if TypeScript files are touched.
-- Add tests only if the repository already has a suitable test setup.
-
-Stage 4 should not implement:
-
-- image import
-- background removal
-- real spritesheet generation
-- Maker export flow
-- Maker UI changes
-- complex Runtime package picker UI
-- desktop window behavior changes
-- blinking
-- waving
-- Live2D
-- image-to-video
-- cloud APIs
-- plugin systems
-- multi-pet support
-- system tray
-- complex CV
-
-Suggested Stage 4 branch:
-
-```powershell
-cd D:\dev\AutoPet
-git switch main
-git pull --ff-only origin main
-git switch -c feat/sample-pet-fixture
-```
-
-Suggested Stage 4 Codex prompt:
-
-```text
-Read README.md, AGENTS.md, docs/dev-log.md, and docs/pet-schema.md first.
-Treat them as the source of truth.
-
-Repository:
-D:\dev\AutoPet
-
-Current state:
-- PR #1 scaffold has been merged into main.
-- PR #2 pet manifest schema and validator has been merged into main.
-- Stage 3 manifest-driven pet-engine player has been merged into main.
-- main contains the v0.1 scaffold, the v0.1 pet manifest schema, and the
-  manifest-driven pet-engine player foundation.
-- corepack pnpm typecheck passes.
-- corepack pnpm build passes.
-- This is not a v0.1 release yet; it is still a scaffold / implementation stage.
-
-Before changing files:
-1. Run:
-   git status
-   git branch --show-current
-2. Confirm you are on the Stage 4 feature branch.
-3. Briefly explain your implementation plan.
-
-Task:
-Implement Stage 4 only: add a small sample pet package or example
-manifest/runtime fixture for future Runtime loading and smoke testing.
-
-Requirements:
-- Keep the task small and focused on a fixture or example manifest.
-- Use the v0.1 manifest schema from @autopet/pet-format.
-- Do not add real image import, export, or spritesheet generation.
-- Do not add complex Runtime package loading UI.
-- Keep fixture data deterministic and suitable for later smoke tests.
-- Add typecheck/build coverage.
-- Add tests only if the repository already has a test setup.
-- Do not introduce a new test framework just for this task.
-
-Do not implement:
-- image import
-- background removal
-- real spritesheet generation
-- Maker export flow
-- Maker UI changes
-- complex Runtime package picker UI
-- Electron window changes
-- blinking
-- waving
-- Live2D
-- image-to-video
-- cloud APIs
-- plugin systems
-- multi-pet support
-- system tray
-- complex CV
-
-After changing files, run:
-corepack pnpm typecheck
-corepack pnpm build
-
-Then summarize:
-- files changed
-- fixture/example behavior added
-- commands run and results
-- any remaining risks or follow-up tasks
-
-Do not push to GitHub.
-```
+- Accept transparent PNG input as the reliable baseline.
+- Preserve alpha, trim transparent bounds, resize the subject, and normalize it
+  onto a fixed `256 x 256` canvas.
+- Generate deterministic transform-based frames for the v0.1 states:
+  `idle`, `bounce`, `click`, `sleep`, and `drag`.
+- Assemble a `spritesheet.png` and write a v0.1 `pet.json` package manifest.
+- Keep `preview.gif` optional unless explicitly requested.
+- Use Pillow and the existing Python image-pipeline package area.
+- Do not add background removal, rembg, Maker UI, Runtime UI, Electron window
+  changes, cloud APIs, or complex CV in Stage 5.
 
 ---
 
