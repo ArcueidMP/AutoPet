@@ -52,6 +52,16 @@ Use a local Python virtual environment:
 
 Use project-local dependencies whenever possible.
 
+## Default Codex Workflow
+
+Default mode is Mode A / Implement Only.
+Codex should not stage files, commit, push, create pull requests, merge pull
+requests, delete branches, force push, or use `git add .` unless explicitly
+instructed later.
+After implementation, Codex should summarize changed files, commands run,
+results, risks, follow-up tasks, and suggested PR title/body text.
+The human user performs final review and Git/GitHub operations.
+
 ## Coding rules
 
 Prefer small, reviewable changes.

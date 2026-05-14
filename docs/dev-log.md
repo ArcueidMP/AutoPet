@@ -22,13 +22,14 @@ https://github.com/ArcueidMP/AutoPet
 Current branch:
 
 ```text
-feat/sample-pet-fixture
+chore/codex-mode-a-workflow
 ```
 
 Current Git state:
 
 ```text
-Stage 4 fixture changes are present locally on feat/sample-pet-fixture.
+Stage 4.5 workflow documentation changes are present locally on
+chore/codex-mode-a-workflow.
 Not pushed to GitHub in this thread.
 ```
 
@@ -47,6 +48,11 @@ Completed stages:
 - Stage 3: Manifest-driven pet-engine animation/player foundation.
 - Stage 4: Checked-in sample pet fixture for future Runtime loading and smoke
   testing.
+
+Stage 4.5 is a workflow hygiene task adding the PR template and Mode A /
+Implement Only workflow documentation. It does not implement product
+functionality. The next product implementation task remains Stage 5: Python
+transparent PNG normalization plus deterministic spritesheet/package MVP.
 
 The Stage 2 feature branch has been cleaned up:
 
