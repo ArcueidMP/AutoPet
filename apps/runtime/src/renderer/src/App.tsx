@@ -1,10 +1,29 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 import { PetAnimationPlayer } from "@autopet/pet-engine";
 import { validatePetManifest } from "@autopet/pet-format";
 
 import samplePetManifestInput from "../../../../../examples/sample-pet/pet.json";
 import samplePetSpritesheetUrl from "../../../../../examples/sample-pet/spritesheet.png?url";
+
+interface ActiveDrag {
+  pointerId: number;
+  runtimeWindow: AutoPetBridge["runtimeWindow"];
+  startDrag: Promise<void>;
+}
+
+function getRuntimeWindowApi(): AutoPetBridge["runtimeWindow"] | null {
+  const runtimeWindow = window.autopet?.runtimeWindow;
+
+  if (runtimeWindow === undefined) {
+    console.warn(
+      "AutoPet Runtime drag API is unavailable; window dragging is disabled."
+    );
+    return null;
+  }
+
+  return runtimeWindow;
+}
 
 export function App() {
   const samplePet = useMemo(() => {
@@ -27,6 +46,7 @@ export function App() {
   const [snapshot, setSnapshot] = useState(() =>
     samplePet.ok ? samplePet.player.snapshot() : null
   );
+  const activeDrag = useRef<ActiveDrag | null>(null);
 
   useEffect(() => {
     if (!samplePet.ok) {
@@ -58,15 +78,79 @@ export function App() {
 
   const handlePetPointerDown = useCallback(
     (event: PointerEvent<HTMLButtonElement>) => {
-      if (event.button !== 0 || !samplePet.ok) {
+      if (event.button !== 0) {
         return;
       }
 
-      if (samplePet.player.setState("click")) {
+      const runtimeWindow = getRuntimeWindowApi();
+
+      if (runtimeWindow === null) {
+        return;
+      }
+
+      event.preventDefault();
+      event.currentTarget.setPointerCapture(event.pointerId);
+      activeDrag.current = {
+        pointerId: event.pointerId,
+        runtimeWindow,
+        startDrag: runtimeWindow.startDrag()
+      };
+    },
+    []
+  );
+
+  const handlePetPointerUp = useCallback(
+    async (event: PointerEvent<HTMLButtonElement>) => {
+      const drag = activeDrag.current;
+
+      if (drag === null || drag.pointerId !== event.pointerId) {
+        return;
+      }
+
+      const shouldReleasePointerCapture = event.currentTarget.hasPointerCapture(
+        event.pointerId
+      );
+      activeDrag.current = null;
+
+      if (shouldReleasePointerCapture) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+
+      await drag.startDrag;
+      const endDragResult = await drag.runtimeWindow.endDrag();
+
+      if (endDragResult.didMove) {
+        return;
+      }
+
+      if (samplePet.ok && samplePet.player.setState("click")) {
         setSnapshot(samplePet.player.snapshot());
       }
     },
     [samplePet]
+  );
+
+  const handlePetPointerCancel = useCallback(
+    async (event: PointerEvent<HTMLButtonElement>) => {
+      const drag = activeDrag.current;
+
+      if (drag === null || drag.pointerId !== event.pointerId) {
+        return;
+      }
+
+      const shouldReleasePointerCapture = event.currentTarget.hasPointerCapture(
+        event.pointerId
+      );
+      activeDrag.current = null;
+
+      if (shouldReleasePointerCapture) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+
+      await drag.startDrag;
+      await drag.runtimeWindow.endDrag();
+    },
+    []
   );
 
   if (!samplePet.ok) {
@@ -105,10 +189,9 @@ export function App() {
           snapshot.frameIndex + 1
         }`}
         onPointerDown={handlePetPointerDown}
+        onPointerUp={handlePetPointerUp}
+        onPointerCancel={handlePetPointerCancel}
       />
-      <div className="runtime-status">
-        {snapshot.stateName} / {snapshot.frameIndex + 1}
-      </div>
     </main>
   );
 }
