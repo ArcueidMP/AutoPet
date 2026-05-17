@@ -2,7 +2,7 @@
 
 ## Current Handoff State
 
-Date: 2026-05-14
+Date: 2026-05-17
 
 AutoPet is still in the v0.1 scaffold / implementation stage. This is not a
 v0.1 release.
@@ -22,18 +22,17 @@ https://github.com/ArcueidMP/AutoPet
 Current branch:
 
 ```text
-chore/codex-mode-a-workflow
+docs/stage6-handoff-refresh
 ```
 
 Current Git state:
 
 ```text
-Stage 4.5 workflow documentation changes are present locally on
-chore/codex-mode-a-workflow.
-Not pushed to GitHub in this thread.
+Stage 6.5 is a docs-only source-of-truth refresh after completed Stage 5 and
+Stage 6 work. The working tree was clean before this docs task began.
 ```
 
-Merged pull requests:
+Known merged pull requests documented in this log:
 
 ```text
 PR #1: Scaffold v0.1 project structure
@@ -48,75 +47,13 @@ Completed stages:
 - Stage 3: Manifest-driven pet-engine animation/player foundation.
 - Stage 4: Checked-in sample pet fixture for future Runtime loading and smoke
   testing.
+- Stage 4.5: PR template and Codex Mode A / Implement Only workflow docs.
+- Stage 5: Python transparent PNG image-pipeline package MVP.
+- Stage 6.1: Runtime sample-pet playback.
+- Stage 6.2 + 6.3: Runtime transparent draggable window and minimal context
+  menu.
 
-Stage 4.5 is a workflow hygiene task adding the PR template and Mode A /
-Implement Only workflow documentation. It does not implement product
-functionality. The next product implementation task remains Stage 5: Python
-transparent PNG normalization plus deterministic spritesheet/package MVP.
-
-The Stage 2 feature branch has been cleaned up:
-
-```text
-feat/pet-format-schema
-```
-
-Status:
-
-```text
-Deleted locally.
-Deleted on GitHub.
-```
-
-Latest verification after Stage 4:
-
-```powershell
-corepack pnpm --filter @autopet/pet-format test
-corepack pnpm typecheck
-corepack pnpm build
-PNG dimension check: 2048 x 1280
-```
-
-Result:
-
-```text
-Passed
-```
-
-Current source-of-truth files for future ChatGPT / Codex threads:
-
-```text
-README.md
-AGENTS.md
-docs/dev-log.md
-docs/pet-schema.md
-```
-
-Current recommended next task:
-
-```text
-Stage 5 should implement Python transparent PNG normalization plus a
-deterministic spritesheet/package MVP.
-```
-
-Stage 5 should not implement background removal, rembg, Maker UI, Runtime UI,
-Electron window changes, blinking, waving, Live2D, image-to-video, cloud APIs,
-plugin systems, multi-pet support, system tray, or complex CV.
-
-Stage 5 local implementation note:
-
-```text
-Branch: feat/image-pipeline-package-mvp
-Status: Implemented locally in packages/image-pipeline.
-Not staged, committed, pushed, or opened as a PR by Codex.
-```
-
-Stage 5 adds the Pillow-only transparent PNG package MVP: alpha-preserving
-normalization, deterministic transform frames, `spritesheet.png`, `pet.json`,
-`preview.gif`, a small module CLI, and package-local unittest coverage. It does
-not add rembg, background removal, Maker UI, Runtime changes, or generated
-sample outputs.
-
-Stage 5 verification during implementation:
+Latest known verification:
 
 ```powershell
 .\.venv\Scripts\python.exe -m compileall packages\image-pipeline\autopet_image_pipeline
@@ -128,8 +65,34 @@ corepack pnpm build
 Result:
 
 ```text
-Passed
+Passed during Stage 5 / Stage 6 work.
+Runtime manual smoke passed for sample playback, drag, right-click menu, Reset
+Position, Always on Top toggle, and Exit.
 ```
+
+Current source-of-truth files for future ChatGPT / Codex threads:
+
+```text
+README.md
+AGENTS.md
+docs/dev-log.md
+docs/pet-schema.md
+docs/workflows/codex-pr-workflow.md
+```
+
+Current recommended next task:
+
+```text
+Stage 7 should implement Runtime Load Pet folder support.
+```
+
+Stage 7 should let the Runtime select a local folder containing `pet.json` and
+`spritesheet.png`, validate the manifest, load the package assets, and replace
+the checked-in sample pet with the selected local package.
+
+Stage 7 should not implement Maker export integration, rembg, package zip
+support, persistent settings, system tray, multi-pet support, or a plugin
+system.
 
 ---
 
@@ -676,6 +639,108 @@ Passed
 
 ---
 
+## Stage 5 Summary - Python Transparent PNG Package MVP
+
+Stage 5 implemented the Pillow-only transparent PNG package MVP in:
+
+```text
+packages/image-pipeline
+```
+
+The pipeline accepts transparent PNG input as the reliable baseline. It
+preserves alpha, trims alpha bounds, normalizes the subject into a fixed
+`256 x 256` canvas, resizes the subject to a maximum `220 px`, generates
+deterministic transform-only frames for the v0.1 states, and writes a local pet
+package folder.
+
+Generated package outputs:
+
+```text
+pet.json
+spritesheet.png
+preview.gif
+```
+
+The generated spritesheet is arranged as eight `256 x 256` columns by five
+state rows:
+
+- `idle`
+- `bounce`
+- `click`
+- `sleep`
+- `drag`
+
+Stage 5 uses Python 3.13 locally and Pillow as the required image dependency.
+It does not include `rembg`, background removal, Maker UI integration, Runtime
+loading UI, or generated sample outputs.
+
+Stage 5 verification:
+
+```powershell
+.\.venv\Scripts\python.exe -m compileall packages\image-pipeline\autopet_image_pipeline
+.\.venv\Scripts\python.exe -m unittest discover -s packages\image-pipeline
+corepack pnpm typecheck
+corepack pnpm build
+```
+
+Result:
+
+```text
+Passed
+```
+
+---
+
+## Stage 6.1 Summary - Runtime Sample Pet Playback
+
+Stage 6.1 wired the Runtime to the checked-in sample pet fixture:
+
+```text
+examples/sample-pet/pet.json
+examples/sample-pet/spritesheet.png
+```
+
+The Runtime validates the sample manifest with `@autopet/pet-format`, advances
+animation frames with `@autopet/pet-engine`, and renders the active frame from
+the sample spritesheet.
+
+Stage 6.1 did not add user package selection or Maker export integration. The
+Runtime still uses the checked-in sample pet until Stage 7 adds Load Pet folder
+support.
+
+---
+
+## Stage 6.2 + 6.3 Summary - Runtime Window Shell, Drag, and Context Menu
+
+Stage 6.2 + 6.3 completed the minimal Runtime window shell for current smoke
+testing. The Runtime window is transparent, frameless, fixed at `256 x 256`,
+and always-on-top by default.
+
+Runtime interaction now includes:
+
+- drag-to-move
+- right-click context menu
+- Reset Position
+- Always on Top toggle
+- Exit
+
+Important implementation note: electron-vite outputs the preload bundle as
+`out/preload/index.mjs`, so the Runtime `BrowserWindow` loads
+`../preload/index.mjs`. The preload bridge runs with `contextIsolation: true`,
+`nodeIntegration: false`, and `sandbox: false`.
+
+Stage 6 verification:
+
+```powershell
+corepack pnpm typecheck
+corepack pnpm build
+```
+
+Manual Runtime smoke passed for sample playback, drag, right-click menu, Reset
+Position, Always on Top toggle, and Exit.
+
+---
+
 ## Important Project Boundaries
 
 The v0.1 scope remains intentionally small.
@@ -683,9 +748,9 @@ The v0.1 scope remains intentionally small.
 Included in v0.1:
 
 - Maker scaffold
-- Runtime scaffold
+- Runtime sample-pet playback in a transparent draggable window
 - Transparent PNG as the reliable baseline input
-- Local image-processing pipeline placeholder
+- Pillow-only transparent PNG image-pipeline package MVP
 - Simple transform-based animation direction
 - Pet package / manifest direction
 - Windows-first development
@@ -693,6 +758,8 @@ Included in v0.1:
 - Small documented `pet.json` schema
 - Manifest-driven pet-engine animation/player foundation
 - Checked-in sample pet fixture for future Runtime loading and smoke testing
+- Minimal Runtime context menu with Reset Position, Always on Top toggle, and
+  Exit
 
 Not included in v0.1:
 
@@ -732,7 +799,7 @@ Git produced repeated line-ending warnings such as:
 LF will be replaced by CRLF the next time Git touches it
 ```
 
-This was not fixed during Stage 1, Stage 2, Stage 3, or Stage 4.
+This was not fixed during Stage 1 through Stage 6.5.
 
 This is not currently blocking because:
 
@@ -753,30 +820,25 @@ This cleanup should be kept separate from feature work.
 
 ---
 
-## Recommended Stage 5 Task
+## Recommended Stage 7 Task
 
-Stage 5 should focus on the Python transparent PNG normalization plus
-deterministic spritesheet/package MVP.
+Stage 7 should focus on Runtime Load Pet folder support.
 
 Recommended task:
 
 ```text
-Implement Python transparent PNG normalization and deterministic
-spritesheet/package generation for the minimal v0.1 pipeline.
+Implement Runtime Load Pet folder support for local pet packages.
 ```
 
-Expected Stage 5 direction:
+Expected Stage 7 direction:
 
-- Accept transparent PNG input as the reliable baseline.
-- Preserve alpha, trim transparent bounds, resize the subject, and normalize it
-  onto a fixed `256 x 256` canvas.
-- Generate deterministic transform-based frames for the v0.1 states:
-  `idle`, `bounce`, `click`, `sleep`, and `drag`.
-- Assemble a `spritesheet.png` and write a v0.1 `pet.json` package manifest.
-- Keep `preview.gif` optional unless explicitly requested.
-- Use Pillow and the existing Python image-pipeline package area.
-- Do not add background removal, rembg, Maker UI, Runtime UI, Electron window
-  changes, cloud APIs, or complex CV in Stage 5.
+- Let the Runtime select a folder containing `pet.json` and `spritesheet.png`.
+- Validate `pet.json` with `@autopet/pet-format`.
+- Load package assets from the selected local folder.
+- Replace the checked-in sample pet with the selected local package.
+- Keep the current transparent draggable window and minimal context menu.
+- Do not add Maker export integration, rembg, package zip support, persistent
+  settings, system tray, multi-pet support, or a plugin system in Stage 7.
 
 ---
 
@@ -792,6 +854,7 @@ README.md
 AGENTS.md
 docs/dev-log.md
 docs/pet-schema.md
+docs/workflows/codex-pr-workflow.md
 ```
 
 Each Codex thread should handle only one small task.

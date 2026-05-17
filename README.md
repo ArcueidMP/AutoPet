@@ -12,7 +12,24 @@ AutoPet v0.1 does **not** attempt to infer eyes, hands, skeletons, facial expres
 
 ## Current Status
 
-AutoPet is in the **v0.1 planning and initial implementation stage**.
+AutoPet is in the **v0.1 scaffold / implementation stage**, not a v0.1
+release.
+
+The repository now includes:
+
+- shared pet manifest schema and validator
+- manifest-driven pet animation player
+- checked-in sample pet fixture
+- Pillow-only transparent PNG image-pipeline package MVP
+- Runtime sample-pet playback in a transparent draggable window with a minimal
+  context menu
+
+The remaining v0.1 product gap is connecting user-selected packages and Maker
+export:
+
+- Runtime still needs Load Pet folder support.
+- Maker still needs image import, pipeline invocation, and package export
+  integration.
 
 The first implementation target is **Windows 10/11**, developed with the Windows Codex App workflow in mind. The architecture should avoid unnecessary Windows-only assumptions so that macOS and Debian/Ubuntu Linux support can be added later.
 
