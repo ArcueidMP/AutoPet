@@ -1,17 +1,50 @@
-import { BrowserWindow, Menu, app, ipcMain, screen } from "electron";
+import {
+  BrowserWindow,
+  Menu,
+  app,
+  dialog,
+  ipcMain,
+  net,
+  protocol,
+  screen
+} from "electron";
 import type {
   IpcMainInvokeEvent,
   MenuItemConstructorOptions,
   Rectangle
 } from "electron";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 
-import { RUNTIME_WINDOW_IPC } from "../shared/ipc";
+import {
+  RUNTIME_PET_IPC,
+  RUNTIME_WINDOW_IPC
+} from "../shared/ipc";
+import type {
+  RuntimePetLoadedPayload,
+  RuntimePetLoadErrorPayload
+} from "../shared/ipc";
+import { loadRuntimePetPackage } from "./pet-package-loader";
+import type { RuntimePetPackage } from "./pet-package-loader";
 
 const RUNTIME_WINDOW_SIZE = 256;
 const RUNTIME_WINDOW_MARGIN = 24;
 const DRAG_POLL_INTERVAL_MS = 16;
 const DRAG_START_THRESHOLD_PX = 4;
+const PET_ASSET_PROTOCOL = "autopet-pet-asset";
+const ACTIVE_PET_ASSET_HOST = "active";
+const ACTIVE_PET_SPRITE_PATH = "/sprite";
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: PET_ASSET_PROTOCOL,
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true
+    }
+  }
+]);
 
 interface DragSession {
   cursorStart: {
@@ -25,6 +58,8 @@ interface DragSession {
 
 const dragSessions = new WeakMap<BrowserWindow, DragSession>();
 const activeDragWindows = new Set<BrowserWindow>();
+let activeRuntimePetPackage: RuntimePetPackage | null = null;
+let activeRuntimePetPackageVersion = 0;
 
 async function loadRenderer(window: BrowserWindow): Promise<void> {
   const devServerUrl = process.env.ELECTRON_RENDERER_URL;
@@ -35,6 +70,63 @@ async function loadRenderer(window: BrowserWindow): Promise<void> {
   }
 
   await window.loadFile(join(__dirname, "../renderer/index.html"));
+}
+
+function createActiveSpriteUrl(): string {
+  const url = new URL(
+    `${PET_ASSET_PROTOCOL}://${ACTIVE_PET_ASSET_HOST}${ACTIVE_PET_SPRITE_PATH}`
+  );
+  url.searchParams.set("v", String(activeRuntimePetPackageVersion));
+
+  return url.toString();
+}
+
+function createTextResponse(message: string, status: number): Response {
+  return new Response(message, {
+    status,
+    headers: {
+      "content-type": "text/plain; charset=utf-8"
+    }
+  });
+}
+
+async function handlePetAssetRequest(request: Request): Promise<Response> {
+  if (request.method !== "GET") {
+    return createTextResponse("Method not allowed.", 405);
+  }
+
+  let url: URL;
+
+  try {
+    url = new URL(request.url);
+  } catch {
+    return createTextResponse("Invalid pet asset URL.", 400);
+  }
+
+  const isActiveSpriteRequest =
+    url.protocol === `${PET_ASSET_PROTOCOL}:` &&
+    url.hostname === ACTIVE_PET_ASSET_HOST &&
+    url.pathname === ACTIVE_PET_SPRITE_PATH;
+
+  if (!isActiveSpriteRequest) {
+    return createTextResponse("Unsupported pet asset URL.", 400);
+  }
+
+  if (activeRuntimePetPackage === null) {
+    return createTextResponse("No active pet package.", 404);
+  }
+
+  try {
+    return await net.fetch(
+      pathToFileURL(activeRuntimePetPackage.spritePath).toString()
+    );
+  } catch {
+    return createTextResponse("Active pet sprite was not found.", 404);
+  }
+}
+
+function registerPetAssetProtocol(): void {
+  protocol.handle(PET_ASSET_PROTOCOL, handlePetAssetRequest);
 }
 
 function getDefaultRuntimeBounds(): Rectangle {
@@ -60,8 +152,95 @@ function resetRuntimePosition(window: BrowserWindow): void {
   window.setBounds(getDefaultRuntimeBounds());
 }
 
+function sendRuntimePetLoaded(
+  window: BrowserWindow,
+  payload: RuntimePetLoadedPayload
+): void {
+  if (window.isDestroyed()) {
+    return;
+  }
+
+  window.webContents.send(RUNTIME_PET_IPC.loaded, payload);
+}
+
+function sendRuntimePetLoadError(
+  window: BrowserWindow,
+  payload: RuntimePetLoadErrorPayload
+): void {
+  if (window.isDestroyed()) {
+    return;
+  }
+
+  window.webContents.send(RUNTIME_PET_IPC.loadError, payload);
+}
+
+async function loadRuntimePetFromFolder(window: BrowserWindow): Promise<void> {
+  let selectedFolder: string | undefined;
+
+  try {
+    const result = await dialog.showOpenDialog(window, {
+      title: "Load AutoPet Package",
+      properties: ["openDirectory"]
+    });
+
+    if (result.canceled) {
+      return;
+    }
+
+    selectedFolder = result.filePaths[0];
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error.";
+
+    sendRuntimePetLoadError(window, {
+      errors: [`Could not open folder picker: ${message}`]
+    });
+    return;
+  }
+
+  if (selectedFolder === undefined) {
+    return;
+  }
+
+  let result: Awaited<ReturnType<typeof loadRuntimePetPackage>>;
+
+  try {
+    result = await loadRuntimePetPackage(selectedFolder);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error.";
+
+    sendRuntimePetLoadError(window, {
+      errors: [`Could not load pet package: ${message}`]
+    });
+    return;
+  }
+
+  if (!result.ok) {
+    sendRuntimePetLoadError(window, {
+      errors: result.errors
+    });
+    return;
+  }
+
+  activeRuntimePetPackage = result.package;
+  activeRuntimePetPackageVersion += 1;
+
+  sendRuntimePetLoaded(window, {
+    manifest: result.package.manifest,
+    spriteUrl: createActiveSpriteUrl()
+  });
+}
+
 function openRuntimeContextMenu(window: BrowserWindow): void {
   const template: MenuItemConstructorOptions[] = [
+    {
+      label: "Load Pet...",
+      click: () => {
+        void loadRuntimePetFromFolder(window);
+      }
+    },
+    {
+      type: "separator"
+    },
     {
       label: "Reset Position",
       click: () => {
@@ -299,6 +478,7 @@ function createRuntimeWindow(): void {
 }
 
 app.whenReady().then(() => {
+  registerPetAssetProtocol();
   createRuntimeWindow();
 
   app.on("activate", () => {
