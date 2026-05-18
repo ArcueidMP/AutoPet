@@ -2,10 +2,9 @@
 
 ## Current Handoff State
 
-Date: 2026-05-17
+Date: 2026-05-18
 
-AutoPet is still in the v0.1 scaffold / implementation stage. This is not a
-v0.1 release.
+AutoPet is still in the v0.1 implementation stage. This is not a v0.1 release.
 
 Local repository:
 
@@ -22,14 +21,15 @@ https://github.com/ArcueidMP/AutoPet
 Current branch:
 
 ```text
-docs/stage6-handoff-refresh
+docs/stage8-source-of-truth-refresh
 ```
 
 Current Git state:
 
 ```text
-Stage 6.5 is a docs-only source-of-truth refresh after completed Stage 5 and
-Stage 6 work. The working tree was clean before this docs task began.
+Stage 8 is complete and this branch is a docs-only source-of-truth refresh
+after completed Runtime Load Pet support and Maker transparent PNG export work.
+The working tree was clean before this docs task began.
 ```
 
 Known merged pull requests documented in this log:
@@ -37,37 +37,58 @@ Known merged pull requests documented in this log:
 ```text
 PR #1: Scaffold v0.1 project structure
 PR #2: Add v0.1 pet manifest schema and validator
-PR #3: Add manifest-driven pet-engine player
+PR #3: Update dev log after Stage 2
+PR #4: Add manifest-driven pet-engine player
+PR #5: Update dev log after Stage 3
+PR #6: Add sample pet fixture
+PR #7: Document Codex Mode A workflow
+PR #8: Implement Python image pipeline package MVP
+PR #9: Play sample pet fixture in Runtime
+PR #10: Add Runtime draggable window shell and context menu
+PR #11: Refresh handoff after Runtime stage
+PR #12: Add Runtime pet package loader helper
+PR #13: Load pet packages from local folders
+PR #14: Add Maker image pipeline runner helper
+PR #15: Export pet packages from transparent PNGs
 ```
 
 Completed stages:
 
-- Stage 1: Initial repository and v0.1 scaffold.
+- Stage 1: Initial repository and v0.1 architecture scaffold.
 - Stage 2: v0.1 pet manifest schema and validator.
 - Stage 3: Manifest-driven pet-engine animation/player foundation.
-- Stage 4: Checked-in sample pet fixture for future Runtime loading and smoke
-  testing.
+- Stage 4: Checked-in sample pet fixture and workflow foundation.
 - Stage 4.5: PR template and Codex Mode A / Implement Only workflow docs.
 - Stage 5: Python transparent PNG image-pipeline package MVP.
 - Stage 6.1: Runtime sample-pet playback.
 - Stage 6.2 + 6.3: Runtime transparent draggable window and minimal context
   menu.
+- Stage 6.5: Docs handoff refresh.
+- Stage 7.1: Runtime package loader helper.
+- Stage 7.2: Runtime `Load Pet...` folder support and renderer switching.
+- Stage 8.1: Maker image-pipeline runner helper.
+- Stage 8.2: Maker transparent PNG export UI / IPC integration.
 
 Latest known verification:
 
 ```powershell
-.\.venv\Scripts\python.exe -m compileall packages\image-pipeline\autopet_image_pipeline
-.\.venv\Scripts\python.exe -m unittest discover -s packages\image-pipeline
+corepack pnpm --filter @autopet/maker typecheck
 corepack pnpm typecheck
 corepack pnpm build
+corepack pnpm --filter @autopet/image-pipeline typecheck
+corepack pnpm --filter @autopet/image-pipeline test
+.\.venv\Scripts\python.exe --version
+.\.venv\Scripts\python.exe -m compileall packages\image-pipeline\autopet_image_pipeline
+.\.venv\Scripts\python.exe -m unittest discover -s packages\image-pipeline
 ```
 
 Result:
 
 ```text
-Passed during Stage 5 / Stage 6 work.
-Runtime manual smoke passed for sample playback, drag, right-click menu, Reset
-Position, Always on Top toggle, and Exit.
+Passed during Stage 8 work.
+Maker manual smoke passed for opening the export form, choosing a transparent
+PNG, choosing an output folder, exporting a temporary transparent PNG, and
+generating pet.json, spritesheet.png, and preview.gif.
 ```
 
 Current source-of-truth files for future ChatGPT / Codex threads:
@@ -83,16 +104,18 @@ docs/workflows/codex-pr-workflow.md
 Current recommended next task:
 
 ```text
-Stage 7 should implement Runtime Load Pet folder support.
+Stage 9 - v0.1 end-to-end smoke, docs, CI/release readiness.
 ```
 
-Stage 7 should let the Runtime select a local folder containing `pet.json` and
-`spritesheet.png`, validate the manifest, load the package assets, and replace
-the checked-in sample pet with the selected local package.
+Stage 9 should include:
 
-Stage 7 should not implement Maker export integration, rembg, package zip
-support, persistent settings, system tray, multi-pet support, or a plugin
-system.
+- end-to-end Maker export -> Runtime `Load Pet...` smoke
+- source-of-truth consistency check
+- minimal CI consideration
+- release readiness notes
+
+Stage 9 should not assume installer creation or GitHub Release binaries unless
+the human explicitly confirms that release packaging is in scope.
 
 ---
 
@@ -741,14 +764,141 @@ Position, Always on Top toggle, and Exit.
 
 ---
 
+## Stage 6.5 Summary - Docs Handoff Refresh
+
+Stage 6.5 refreshed the source-of-truth handoff after Stage 5 and Stage 6 work.
+It documented the Python transparent PNG pipeline MVP, Runtime sample-pet
+playback, transparent draggable Runtime window, and minimal Runtime context menu.
+
+Stage 6.5 was docs-only and did not change app behavior.
+
+---
+
+## Stage 7.1 Summary - Runtime Package Loader Helper
+
+Stage 7.1 added the Runtime main-process package loader helper. The helper loads
+a local pet package folder, reads `pet.json`, validates it with
+`@autopet/pet-format`, verifies the declared sprite file, verifies the optional
+preview file when present, and returns normalized local paths plus the validated
+manifest.
+
+The loader rejects missing folders, non-folder paths, invalid JSON, invalid
+manifests, missing sprite assets, and asset paths that resolve outside the
+package folder.
+
+Stage 7.1 did not add user-facing Runtime selection UI, Maker export
+integration, persistence, zip support, rembg, system tray, multi-pet support, or
+plugin support.
+
+---
+
+## Stage 7.2 Summary - Runtime Load Pet Folder Support
+
+Stage 7.2 wired Runtime package loading into the current Runtime window. The
+right-click context menu now includes `Load Pet...`, which opens a folder
+picker. Selected folders are loaded through the Stage 7.1 package loader.
+
+When a package loads successfully, the Runtime updates its active package,
+generates an active sprite asset URL through the main process, sends the loaded
+manifest and sprite URL to the renderer, and the renderer switches from the
+checked-in sample pet to the selected package. Load failures are shown in the
+Runtime renderer.
+
+The Runtime still starts with the checked-in sample pet as a fallback/default
+fixture. Stage 7.2 did not add Maker integration, persistence, zip support,
+system tray, multi-pet support, or plugin support.
+
+---
+
+## Stage 8.1 Summary - Maker Image-Pipeline Runner Helper
+
+Stage 8.1 added the Maker main-process image-pipeline runner helper:
+
+```text
+apps/maker/src/main/image-pipeline-runner.ts
+```
+
+The helper validates basic inputs, resolves paths to absolute paths, verifies
+the input image file, locates the repository root without hard-coding
+`D:\dev\AutoPet`, locates `packages/image-pipeline`, resolves a Python command,
+and invokes:
+
+```powershell
+python -m autopet_image_pipeline --input <input> --output <output> --name <petName>
+```
+
+The subprocess runs with `cwd` set to `packages/image-pipeline`, uses
+`child_process.spawn` with an argument array, does not use `shell: true`, and
+captures stdout/stderr.
+
+After a successful subprocess exit, the helper verifies that the generated
+package contains:
+
+```text
+pet.json
+spritesheet.png
+preview.gif
+```
+
+It then reads `pet.json` and validates it with `@autopet/pet-format`.
+
+Stage 8.1 did not add Maker UI, preload IPC, dialogs, Runtime launching,
+persistence, zip support, rembg, cloud APIs, or new dependencies.
+
+---
+
+## Stage 8.2 Summary - Maker Transparent PNG Export UI / IPC
+
+Stage 8.2 wired the Stage 8.1 runner into the Maker app with a minimal safe
+main/preload/renderer flow.
+
+Added Maker IPC definitions:
+
+```text
+apps/maker/src/shared/ipc.ts
+```
+
+The Maker main process now handles:
+
+- choosing a transparent PNG with `dialog.showOpenDialog`
+- choosing an output folder with `dialog.showOpenDialog`
+- remembering the selected input/output paths in the main process
+- exporting with `runImagePipelineExport`
+
+The Maker preload bridge exposes only a small typed API:
+
+- `selectInputImage()`
+- `selectOutputFolder()`
+- `exportPetPackage({ petName })`
+
+The renderer now shows a modest export form with a pet name input, PNG picker,
+output folder picker, export button, status area, success output paths, and
+error/stdout/stderr snippets.
+
+Stage 8.2 manual smoke passed locally:
+
+- Maker opened with the export form.
+- PNG picker worked.
+- Output folder picker worked.
+- Exporting a temporary transparent PNG succeeded.
+- The generated package contained `pet.json`, `spritesheet.png`, and
+  `preview.gif`.
+
+Stage 8.2 did not add drag-and-drop import, image preview, Runtime launching,
+persistent settings, zip support, rembg, cloud APIs, new dependencies, multi-pet
+support, system tray, or plugin support.
+
+---
+
 ## Important Project Boundaries
 
 The v0.1 scope remains intentionally small.
 
 Included in v0.1:
 
-- Maker scaffold
-- Runtime sample-pet playback in a transparent draggable window
+- Maker transparent PNG export flow
+- Runtime local pet package folder loading
+- Runtime sample-pet fallback playback in a transparent draggable window
 - Transparent PNG as the reliable baseline input
 - Pillow-only transparent PNG image-pipeline package MVP
 - Simple transform-based animation direction
@@ -758,8 +908,8 @@ Included in v0.1:
 - Small documented `pet.json` schema
 - Manifest-driven pet-engine animation/player foundation
 - Checked-in sample pet fixture for future Runtime loading and smoke testing
-- Minimal Runtime context menu with Reset Position, Always on Top toggle, and
-  Exit
+- Minimal Runtime context menu with Load Pet, Reset Position, Always on Top
+  toggle, and Exit
 
 Not included in v0.1:
 
@@ -779,6 +929,9 @@ Not included in v0.1:
 - multi-pet support
 - plugin system
 - system tray, unless explicitly requested later
+- Runtime launching from Maker
+- package zip export
+- persistent settings
 - auto-start on boot
 - screen-edge physics
 
@@ -820,25 +973,30 @@ This cleanup should be kept separate from feature work.
 
 ---
 
-## Recommended Stage 7 Task
+## Recommended Stage 9 Task
 
-Stage 7 should focus on Runtime Load Pet folder support.
+Stage 9 should focus on v0.1 end-to-end smoke, docs, CI, and release readiness.
 
 Recommended task:
 
 ```text
-Implement Runtime Load Pet folder support for local pet packages.
+Stage 9 - v0.1 end-to-end smoke, docs, CI/release readiness.
 ```
 
-Expected Stage 7 direction:
+Expected Stage 9 direction:
 
-- Let the Runtime select a folder containing `pet.json` and `spritesheet.png`.
-- Validate `pet.json` with `@autopet/pet-format`.
-- Load package assets from the selected local folder.
-- Replace the checked-in sample pet with the selected local package.
-- Keep the current transparent draggable window and minimal context menu.
-- Do not add Maker export integration, rembg, package zip support, persistent
-  settings, system tray, multi-pet support, or a plugin system in Stage 7.
+- Run an end-to-end smoke from Maker export to Runtime `Load Pet...`.
+- Confirm a generated package contains `pet.json`, `spritesheet.png`, and
+  `preview.gif`.
+- Confirm Runtime can load and display that generated package.
+- Re-check README, docs, and workflow source-of-truth consistency.
+- Consider minimal CI for TypeScript build/typecheck and Python pipeline tests.
+- Write release readiness notes and remaining known limitations.
+
+Stage 9 should not assume installer work, GitHub Release binaries, zip package
+support, rembg, cloud APIs, persistent settings, Runtime launching from Maker,
+system tray, multi-pet support, or plugin support unless the human explicitly
+confirms that scope.
 
 ---
 

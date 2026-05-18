@@ -1,72 +1,85 @@
 # AutoPet
 
-AutoPet is an open-source, Windows-first desktop application that turns a user-provided image into a lightweight animated desktop pet.
+AutoPet is an open-source, Windows-first desktop application that turns a
+user-provided image into a lightweight animated desktop pet.
 
 The v0.1 goal is deliberately simple:
 
-> **Image in → simple animated pet package out → run it as a desktop pet.**
+```text
+image in -> simple animated pet package out -> run it as a desktop pet
+```
 
-AutoPet v0.1 does **not** attempt to infer eyes, hands, skeletons, facial expressions, or natural character motion. It focuses on a reliable self-service pipeline for creating a simple 2D desktop pet from one image.
+AutoPet v0.1 does not attempt to infer eyes, hands, skeletons, facial
+expressions, or natural character motion. It focuses on a reliable local flow
+for creating a simple 2D desktop pet from one image.
 
 ---
 
 ## Current Status
 
-AutoPet is in the **v0.1 scaffold / implementation stage**, not a v0.1
-release.
+AutoPet is in the v0.1 implementation stage. It is not a v0.1 release yet.
 
-The repository now includes:
+The repository now includes a basic MVP for the transparent-PNG flow:
 
 - shared pet manifest schema and validator
 - manifest-driven pet animation player
 - checked-in sample pet fixture
-- Pillow-only transparent PNG image-pipeline package MVP
-- Runtime sample-pet playback in a transparent draggable window with a minimal
-  context menu
+- Pillow-only transparent PNG image-pipeline package
+- Maker UI for selecting a transparent PNG and output folder
+- Maker main-process helper that invokes the local Python image pipeline
+- Maker export of `pet.json`, `spritesheet.png`, and `preview.gif`
+- Runtime `Load Pet...` folder support for local pet packages
+- Runtime `pet.json` validation and loaded-package sprite display
+- transparent, draggable, always-on-top Runtime window with a minimal context
+  menu
 
-The remaining v0.1 product gap is connecting user-selected packages and Maker
-export:
+This is still not release-ready. Stage 9 should do an end-to-end smoke pass,
+source-of-truth consistency check, minimal CI consideration, and release
+readiness notes before any v0.1 release decision.
 
-- Runtime still needs Load Pet folder support.
-- Maker still needs image import, pipeline invocation, and package export
-  integration.
-
-The first implementation target is **Windows 10/11**, developed with the Windows Codex App workflow in mind. The architecture should avoid unnecessary Windows-only assumptions so that macOS and Debian/Ubuntu Linux support can be added later.
+The first implementation target is Windows 10/11, developed with the Windows
+Codex App workflow in mind. The architecture should avoid unnecessary
+Windows-only assumptions so that macOS and Debian/Ubuntu Linux support can be
+added later.
 
 ---
 
 ## What AutoPet Does in v0.1
 
-AutoPet v0.1 contains two parts:
+AutoPet v0.1 contains two desktop apps:
 
-1. **Maker** — converts a user image into a desktop pet package.
-2. **Runtime** — loads the pet package and displays it as a simple desktop pet.
+1. Maker - converts a transparent PNG into a desktop pet package.
+2. Runtime - loads a local pet package and displays it as a simple desktop pet.
 
 ### Maker
 
-The Maker should support the following v0.1 workflow:
+The current Maker MVP supports the transparent-PNG path:
 
-1. Import an image.
-2. Remove or preserve the background.
-3. Crop transparent or empty boundaries.
-4. Resize and normalize the subject into a fixed canvas.
-5. Generate simple animation frames using 2D transforms.
-6. Assemble a sprite sheet.
-7. Generate a `pet.json` metadata file.
-8. Generate a `preview.gif`.
-9. Export a local pet package.
+1. Choose one local transparent PNG.
+2. Choose a local output folder.
+3. Enter or edit a pet name.
+4. Invoke the local Python image pipeline as a subprocess.
+5. Export a local pet package folder containing:
+   - `pet.json`
+   - `spritesheet.png`
+   - `preview.gif`
+
+The Maker does not currently include drag-and-drop import, image preview,
+persistent settings, zip export, Runtime launching, rembg integration, or cloud
+background removal.
 
 ### Runtime
 
-The Runtime should support the following v0.1 behavior:
+The current Runtime supports:
 
-1. Load a local pet package.
-2. Create a transparent frameless desktop window.
-3. Keep the pet window always on top.
-4. Play the pet animation states.
-5. Let the user drag the pet around.
-6. Provide a right-click menu with basic actions.
-7. Exit cleanly.
+1. Loading a local pet package folder through `Load Pet...`.
+2. Validating `pet.json` with `@autopet/pet-format`.
+3. Resolving package-relative sprite and optional preview paths safely.
+4. Displaying the loaded sprite package.
+5. Playing the manifest-driven animation states.
+6. Dragging the transparent pet window.
+7. Opening a minimal right-click menu.
+8. Exiting cleanly.
 
 ---
 
@@ -74,21 +87,26 @@ The Runtime should support the following v0.1 behavior:
 
 ### Included
 
-- Image import.
-- Transparent PNG support.
-- Optional local automatic background removal.
-- Automatic crop, resize, padding, and canvas normalization.
-- Simple generated animation states.
+- Transparent PNG import in Maker.
+- Local Python image pipeline invocation from Maker.
+- Automatic transparent-bound trim, resize, padding, and canvas normalization.
+- Simple transform-based generated animation states.
 - Sprite sheet generation.
-- `pet.json` generation.
+- `pet.json` generation and validation.
 - `preview.gif` generation.
-- Pet package export.
-- Basic desktop pet runtime.
-- Transparent frameless window.
-- Always-on-top display.
-- Drag-to-move interaction.
-- Right-click menu.
+- Local pet package folder export.
+- Runtime loading for local pet package folders.
+- Transparent frameless Runtime window.
+- Always-on-top Runtime display.
+- Runtime drag-to-move interaction.
+- Minimal Runtime right-click menu.
 - Local-first processing.
+
+### Optional / Future
+
+- Local background removal with `rembg` may be added later as an optional,
+  experimental feature.
+- Package zip export may be considered later.
 
 ### Not Included in v0.1
 
@@ -103,6 +121,7 @@ The Runtime should support the following v0.1 behavior:
 - Live2D-style rigging.
 - Image-to-video generation.
 - Cloud image generation.
+- Paid or remote background-removal services.
 - Multi-pet mode.
 - Plugin system.
 - CLI control.
@@ -110,55 +129,55 @@ The Runtime should support the following v0.1 behavior:
 - Auto-start on boot.
 - Screen-edge physics.
 
-These may be considered in later versions, but they are explicitly out of scope for v0.1.
+These may be considered in later versions, but they are explicitly out of scope
+for the current v0.1 work.
 
 ---
 
 ## Background Removal Policy
 
-AutoPet should support two background modes:
+AutoPet should support two background modes over time.
 
-### 1. Transparent PNG Mode
+### Transparent PNG Mode
 
-This is the most reliable v0.1 path.
+This is the reliable v0.1 path and the currently implemented required flow.
 
-If the input image already has a transparent background, AutoPet should preserve the alpha channel, trim the transparent bounds, normalize the image, and generate the pet package without requiring AI background removal.
+If the input image already has a useful transparent background, AutoPet
+preserves the alpha channel, trims transparent bounds, normalizes the subject,
+generates transform-only frames, and writes a pet package.
 
-### 2. Local Background Removal Mode
+### Local Background Removal Mode
 
-AutoPet may optionally use a local background removal pipeline based on open-source tooling such as `rembg`.
+AutoPet may optionally use a local background removal pipeline based on
+open-source tooling such as `rembg`.
 
-This mode should be treated as **optional and experimental** in v0.1.
+This mode is not part of the current required flow. It should remain optional
+and experimental when introduced.
 
 Important rules:
 
 - AutoPet should not require a paid background removal service.
-- AutoPet should not upload images to a remote service by default.
-- If local background removal is unavailable, the app should fall back to asking the user for a transparent PNG.
-- Any future paid or remote background removal integration must be opt-in, clearly labeled, and disabled by default.
-
-Expected local costs:
-
-- Local CPU/GPU time.
-- Python dependencies.
-- Model file download and disk usage.
-- Longer processing time on low-end machines.
-
-There should be no required API fee for the default v0.1 workflow.
+- AutoPet should not upload images to a remote server by default.
+- If local background removal is unavailable, the app should fall back to
+  asking the user for a transparent PNG.
+- Any future paid or remote background removal integration must be opt-in,
+  clearly labeled, and disabled by default.
 
 ---
 
 ## Animation Model
 
-AutoPet v0.1 uses **programmatic 2D transform animation**, not semantic character animation.
+AutoPet v0.1 uses programmatic 2D transform animation, not semantic character
+animation.
 
-The input image is treated as one foreground subject. Animation frames are generated by applying simple transforms such as:
+The input image is treated as one foreground subject. Animation frames are
+generated by applying simple transforms such as:
 
-- vertical translation,
-- scale,
-- squash/stretch,
-- rotation,
-- opacity changes.
+- vertical translation
+- scale
+- squash/stretch
+- rotation
+- opacity changes
 
 ### v0.1 Animation States
 
@@ -170,36 +189,32 @@ The input image is treated as one foreground subject. Animation frames are gener
 | `sleep` | Slower breathing with reduced opacity | Yes |
 | `drag` | Static or slight tilt while being dragged | Yes |
 
-The animation system should be deterministic and simple enough to generate the same output for the same input and settings.
+The animation system should be deterministic enough to generate the same output
+for the same input and settings.
 
 ---
 
 ## Pet Package Format
 
-The detailed schema should live in a future dedicated document such as:
+The detailed schema lives in:
 
 ```text
 docs/pet-schema.md
 ```
 
-The README only defines the v0.1 package direction.
-
 ### Package Layout
 
-A generated pet package should look like this:
+A generated pet package folder looks like this:
 
 ```text
 my-pet/
-├─ pet.json
-├─ spritesheet.png
-└─ preview.gif
+  pet.json
+  spritesheet.png
+  preview.gif
 ```
 
-It may later be distributed as:
-
-```text
-my-pet.autopet.zip
-```
+The Runtime baseline is `pet.json` plus `spritesheet.png`. Maker-generated
+packages also include `preview.gif`.
 
 ### Draft `pet.json`
 
@@ -255,32 +270,32 @@ my-pet.autopet.zip
 }
 ```
 
-The schema should remain small in v0.1. Do not introduce plugin fields, behavior scripts, physics configuration, or complex rigging data yet.
+The schema should remain small in v0.1. Do not introduce plugin fields,
+behavior scripts, physics configuration, skeleton data, or complex rigging data.
 
 ---
 
 ## Image Processing Pipeline
 
-The v0.1 image pipeline should be implemented as a local Python service or local Python subprocess called from the Electron app.
+The v0.1 image pipeline is a local Python package called by Maker as a
+subprocess.
 
-Recommended pipeline:
+Current pipeline:
 
 ```text
-input image
-→ optional local background removal
-→ alpha mask / transparent foreground
-→ trim transparent bounds
-→ resize subject to target size
-→ place subject on fixed canvas
-→ generate simple shadow
-→ generate animation frames
-→ assemble sprite sheet
-→ generate preview.gif
-→ write pet.json
-→ export pet package
+transparent PNG
+-> preserve alpha
+-> trim transparent bounds
+-> resize subject to target size
+-> place subject on fixed canvas
+-> generate transform-only animation frames
+-> assemble sprite sheet
+-> generate preview.gif
+-> write pet.json
+-> export pet package folder
 ```
 
-### Recommended Defaults
+### Defaults
 
 | Setting | Default |
 |---|---:|
@@ -289,70 +304,66 @@ input image
 | Frame format | PNG frames assembled into one sprite sheet |
 | Sprite sheet layout | One animation state per row |
 | Default FPS | `8` |
-| Export package | Folder first, zip later |
+| Export package | Folder |
 
 ---
 
 ## Technical Stack
 
-### Desktop App
+### Desktop Apps
 
 - Electron
 - TypeScript
 - React
-- pnpm
+- pnpm workspace
 
 ### Image Pipeline
 
-- Python
-- Pillow
-- Optional `rembg` for local background removal
-- Optional FastAPI service wrapper for local image processing
+- Python 3.12 or 3.13
+- Pillow as the required image dependency
+- Optional future `rembg[cpu]` support for local background removal
 
 ### Why This Stack
 
-Electron gives AutoPet a practical path for transparent frameless desktop windows, always-on-top behavior, drag interaction, and cross-platform desktop packaging.
+Electron gives AutoPet a practical path for transparent frameless desktop
+windows, always-on-top behavior, drag interaction, and cross-platform desktop
+packaging.
 
-Python keeps the image processing pipeline simple and gives access to mature image and CV tooling. The Python side should remain local and replaceable so the project can later support alternative pipelines.
+Python keeps the image processing pipeline simple and gives access to mature
+image tooling. The Python side should remain local and replaceable.
 
 ---
 
-## Suggested Repository Structure
+## Repository Structure
 
 ```text
-autopet/
-├─ apps/
-│  ├─ desktop/
-│  │  ├─ src/
-│  │  │  ├─ main/              # Electron main process
-│  │  │  ├─ renderer/          # React UI for Maker
-│  │  │  ├─ runtime/           # Pet runtime window UI
-│  │  │  └─ preload/           # Safe Electron preload APIs
-│  │  └─ package.json
-│  └─ image-service/
-│     ├─ autopet_image_service/
-│     │  ├─ pipeline.py        # Image-to-pet pipeline
-│     │  ├─ background.py      # Optional background removal
-│     │  ├─ animation.py       # Frame generation
-│     │  ├─ spritesheet.py     # Sprite sheet builder
-│     │  └─ export.py          # pet.json + package export
-│     ├─ requirements.txt
-│     └─ README.md
-├─ packages/
-│  ├─ pet-format/              # Shared TypeScript types and validators
-│  ├─ pet-engine/              # Runtime state machine and animation player
-│  └─ shared/                  # Shared utilities
-├─ examples/
-│  └─ sample-pet/
-│     ├─ pet.json
-│     ├─ spritesheet.png
-│     └─ preview.gif
-├─ docs/
-│  ├─ pet-schema.md
-│  ├─ image-pipeline.md
-│  └─ platform-notes.md
-├─ LICENSE
-└─ README.md
+AutoPet/
+  apps/
+    maker/                  # Electron + React Maker app
+      src/
+        main/               # Maker main process and image-pipeline runner
+        preload/            # Safe Maker preload bridge
+        renderer/           # Maker React UI
+        shared/             # Maker IPC types/channels
+    runtime/                # Electron + React Runtime app
+      src/
+        main/               # Runtime window, loading, asset protocol
+        preload/            # Safe Runtime preload bridge
+        renderer/           # Runtime React UI
+        shared/             # Runtime IPC types/channels
+  packages/
+    pet-format/             # v0.1 pet manifest types and validator
+    pet-engine/             # Manifest-driven animation player
+    image-pipeline/         # Local Python transparent PNG pipeline
+  examples/
+    sample-pet/             # Checked-in sample pet fixture
+  docs/
+    workflows/
+    dev-log.md
+    pet-schema.md
+  package.json
+  pnpm-workspace.yaml
+  tsconfig.base.json
 ```
 
 ---
@@ -366,16 +377,17 @@ autopet/
 | Debian/Ubuntu Linux | Planned | X11 should be investigated before Wayland-heavy assumptions |
 | Linux Wayland | Future investigation | Transparent, always-on-top, and global window behavior may need special handling |
 
-AutoPet should avoid hard-coded Windows paths and Windows-only assumptions wherever practical.
+AutoPet should avoid hard-coded Windows paths and Windows-only assumptions
+wherever practical.
 
 Use platform-safe APIs for:
 
-- file paths,
-- config directories,
-- app data directories,
-- temporary directories,
-- process spawning,
-- window behavior abstractions.
+- file paths
+- config directories
+- app data directories
+- temporary directories
+- process spawning
+- window behavior abstractions
 
 ---
 
@@ -387,7 +399,7 @@ Default privacy principles:
 
 - User images are processed locally.
 - User images are not uploaded to remote servers by default.
-- The local image service should bind to `127.0.0.1` if an HTTP service is used.
+- The image pipeline runs locally as a Python subprocess.
 - Any future cloud feature must be opt-in.
 - The UI must clearly indicate when a remote service is being used.
 
@@ -395,71 +407,57 @@ Default privacy principles:
 
 ## Development Setup
 
-The exact commands may change as the repository is implemented. The intended setup is:
-
 ### Prerequisites
 
 - Windows 10/11
 - Git
 - Node.js LTS
-- pnpm
-- Python 3.11+
+- Corepack / pnpm
+- Python 3.12 or 3.13
 
-For the optional `rembg` pipeline, use a Python version supported by the installed `rembg` and `onnxruntime` versions.
+For any future optional `rembg` pipeline, use a Python version supported by the
+installed `rembg` and `onnxruntime` versions.
 
-### Install
+### Install JavaScript Dependencies
 
-```bash
-git clone <repo-url> autopet
-cd autopet
-pnpm install
+```powershell
+corepack pnpm install
 ```
 
-Set up the Python image service:
+### Set Up Python Image Pipeline
 
-```bash
-cd apps/image-service
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
+From the repository root:
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r packages\image-pipeline\requirements.txt
 ```
 
-Return to the repository root:
-
-```bash
-cd ../..
-```
+The required dependency file installs Pillow only.
 
 ### Run in Development
 
-```bash
-pnpm dev
+```powershell
+corepack pnpm dev:maker
+corepack pnpm dev:runtime
 ```
 
 Expected development behavior:
 
-- The Electron app opens the Maker UI.
-- The local image service starts or is launched on demand.
-- A sample pet package can be loaded in the Runtime.
-- Generated packages can be previewed locally.
+- Maker opens the export form for transparent PNG package generation.
+- Runtime opens the transparent desktop pet window.
+- Runtime can load a local package folder with `Load Pet...`.
 
----
+### Verify
 
-## Suggested Development Scripts
-
-These scripts are suggestions for the initial implementation:
-
-```json
-{
-  "scripts": {
-    "dev": "pnpm dev:desktop",
-    "dev:desktop": "pnpm --filter @autopet/desktop dev",
-    "dev:image-service": "cd apps/image-service && python -m autopet_image_service",
-    "test": "pnpm -r test",
-    "lint": "pnpm -r lint",
-    "typecheck": "pnpm -r typecheck"
-  }
-}
+```powershell
+corepack pnpm typecheck
+corepack pnpm build
+corepack pnpm --filter @autopet/image-pipeline typecheck
+corepack pnpm --filter @autopet/image-pipeline test
+.\.venv\Scripts\python.exe -m compileall packages\image-pipeline\autopet_image_pipeline
+.\.venv\Scripts\python.exe -m unittest discover -s packages\image-pipeline
 ```
 
 ---
@@ -468,36 +466,27 @@ These scripts are suggestions for the initial implementation:
 
 The pet runtime window should be:
 
-- transparent,
-- frameless,
-- always on top,
-- draggable,
-- small by default,
-- excluded from complex app UI,
-- controlled by the Electron main process.
+- transparent
+- frameless
+- always on top
+- draggable
+- small by default
+- excluded from complex app UI
+- controlled by the Electron main process
 
-The implementation should isolate platform-specific window behavior in a dedicated module, for example:
-
-```text
-apps/desktop/src/main/platform/
-├─ windows.ts
-├─ macos.ts
-└─ linux.ts
-```
-
-Do not scatter platform checks across the entire codebase.
+Platform-specific window behavior should remain isolated where practical. Do not
+scatter platform checks across the codebase.
 
 ---
 
-## Right-Click Menu in v0.1
+## Runtime Context Menu
 
-The runtime pet should expose a minimal context menu:
+The current Runtime right-click menu exposes:
 
 ```text
 Load Pet...
 Reset Position
-Always on Top: On/Off
-Open Maker
+Always on Top
 Exit
 ```
 
@@ -507,49 +496,52 @@ System tray support is not required in v0.1.
 
 ## Testing Strategy
 
-v0.1 should include tests for the core pipeline rather than trying to test every desktop behavior.
+v0.1 should include tests for the core pipeline and manifest contracts rather
+than trying to test every desktop behavior.
 
-Recommended tests:
+Current useful checks:
 
 - Validate `pet.json` against the v0.1 schema.
-- Verify generated sprite sheets have the expected dimensions.
-- Verify all declared states exist in the sprite sheet.
+- Verify generated sprite sheets have expected dimensions.
 - Verify transparent PNG input preserves alpha.
-- Verify fallback behavior when background removal is unavailable.
-- Verify sample pet package loads in the runtime.
+- Verify opaque or fully transparent input is rejected with helpful errors.
+- Verify sample pet package loads in the Runtime.
 
 Manual smoke tests should cover:
 
-- launching the app on Windows,
-- generating a pet from a transparent PNG,
-- generating a pet from a non-transparent image with local background removal enabled,
-- dragging the pet,
-- opening the right-click menu,
-- exiting cleanly.
+- launching Maker on Windows
+- generating a pet from a transparent PNG
+- loading the generated package in Runtime
+- dragging the pet
+- opening the right-click menu
+- using `Load Pet...`
+- resetting position
+- toggling always-on-top
+- exiting cleanly
 
 ---
 
 ## Roadmap
 
-### v0.1 — Minimal Image-to-Pet Pipeline
+### v0.1 - Minimal Image-to-Pet Pipeline
 
-- Maker UI.
+- Maker transparent PNG export flow.
 - Local image pipeline.
 - Transparent PNG support.
-- Optional local background removal.
 - Simple transform-based animation generation.
-- Pet package export.
-- Runtime window.
-- Drag interaction.
-- Right-click menu.
+- Pet package folder export.
+- Runtime local package loading.
+- Runtime transparent window.
+- Runtime drag interaction.
+- Runtime right-click menu.
 - MIT license.
+- Stage 9 end-to-end smoke, docs, CI consideration, and release readiness.
 
-### v0.2 — Usability Improvements
+### v0.2 - Usability Improvements
 
 Possible future features:
 
-- System tray.
-- Multi-pet management.
+- Optional local background removal.
 - Better package import/export.
 - User-configurable animation speed.
 - Better preview editor.
@@ -557,7 +549,7 @@ Possible future features:
 - Persistent settings.
 - Startup position persistence.
 
-### v0.3 — Developer Integrations
+### v0.3 - Developer Integrations
 
 Possible future features:
 
@@ -565,7 +557,6 @@ Possible future features:
 - Local API for changing pet states.
 - VS Code or terminal integration.
 - Simple external status hooks.
-- Plugin exploration.
 
 ### Future Research
 
@@ -583,27 +574,30 @@ Possible later research topics:
 
 ## AI Coding Agent Notes
 
-When using Codex or another AI coding agent to work on AutoPet, follow these constraints:
+When using Codex or another AI coding agent to work on AutoPet, follow these
+constraints:
 
 1. Keep v0.1 minimal.
-2. Do not add blinking, waving, walking, pose detection, or skeleton rigging in v0.1.
+2. Do not add blinking, waving, walking, pose detection, or skeleton rigging in
+   v0.1.
 3. Do not add cloud dependencies by default.
 4. Do not require paid background removal services.
 5. Prefer transparent PNG support as the reliable baseline.
 6. Treat local background removal as optional.
 7. Keep the pet package schema small.
-8. Place future schema details in `docs/pet-schema.md`.
+8. Place schema details in `docs/pet-schema.md`.
 9. Avoid hard-coded Windows paths.
 10. Use cross-platform path and app-data APIs.
-11. Isolate platform-specific window behavior.
-12. Keep Maker and Runtime logically separate.
-13. Keep the image pipeline deterministic where practical.
-14. Add tests for generated package validity.
-15. Do not expand scope without updating this README and the roadmap.
+11. Keep Maker and Runtime logically separate.
+12. Keep the image pipeline deterministic where practical.
+13. Add tests for generated package validity.
+14. Do not expand scope without updating this README and the roadmap.
 
 The most important v0.1 rule:
 
-> Build the simplest reliable image-to-pet pipeline before attempting intelligent animation.
+```text
+Build the simplest reliable image-to-pet pipeline before attempting intelligent animation.
+```
 
 ---
 
@@ -611,4 +605,4 @@ The most important v0.1 rule:
 
 AutoPet is planned to be released under the MIT License.
 
-See `LICENSE` for details once the repository is initialized.
+See `LICENSE` for details.
