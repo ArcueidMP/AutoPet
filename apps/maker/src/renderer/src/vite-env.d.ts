@@ -1,10 +1,28 @@
 /// <reference types="vite/client" />
 
-interface AutoPetBridge {
-  appName: string;
-  version: string;
+import type {
+  MakerExportPetPackageRequest,
+  MakerExportPetPackageResult,
+  MakerSelectedInputImageResult,
+  MakerSelectedOutputFolderResult
+} from "../../shared/ipc";
+
+declare global {
+  interface AutoPetBridge {
+    appName: string;
+    version: string;
+    maker: {
+      selectInputImage: () => Promise<MakerSelectedInputImageResult>;
+      selectOutputFolder: () => Promise<MakerSelectedOutputFolderResult>;
+      exportPetPackage: (
+        request: MakerExportPetPackageRequest
+      ) => Promise<MakerExportPetPackageResult>;
+    };
+  }
+
+  interface Window {
+    autopet?: AutoPetBridge;
+  }
 }
 
-interface Window {
-  autopet?: AutoPetBridge;
-}
+export {};
