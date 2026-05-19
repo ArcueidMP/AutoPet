@@ -519,6 +519,9 @@ Manual smoke tests should cover:
 - toggling always-on-top
 - exiting cleanly
 
+Detailed Stage 9 manual E2E smoke checklist:
+`docs/workflows/v0.1-e2e-smoke-checklist.md`
+
 ---
 
 ## Roadmap
