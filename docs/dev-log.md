@@ -2,7 +2,7 @@
 
 ## Current Handoff State
 
-Date: 2026-05-18
+Date: 2026-05-19
 
 AutoPet is still in the v0.1 implementation stage. This is not a v0.1 release.
 
@@ -18,18 +18,19 @@ GitHub repository:
 https://github.com/ArcueidMP/AutoPet
 ```
 
-Current branch:
+Branch guidance:
 
 ```text
-docs/stage8-source-of-truth-refresh
+Start future work from clean main, then create a small task-specific branch for
+the current Stage 9 subtask.
 ```
 
-Current Git state:
+Current handoff state:
 
 ```text
-Stage 8 is complete and this branch is a docs-only source-of-truth refresh
-after completed Runtime Load Pet support and Maker transparent PNG export work.
-The working tree was clean before this docs task began.
+Stage 8 is complete.
+Stage 9 has begun with a docs-only manual E2E smoke checklist and
+source-of-truth cleanup.
 ```
 
 Known merged pull requests documented in this log:
@@ -52,7 +53,7 @@ PR #14: Add Maker image pipeline runner helper
 PR #15: Export pet packages from transparent PNGs
 ```
 
-Completed stages:
+Completed / current stages:
 
 - Stage 1: Initial repository and v0.1 architecture scaffold.
 - Stage 2: v0.1 pet manifest schema and validator.
@@ -68,6 +69,7 @@ Completed stages:
 - Stage 7.2: Runtime `Load Pet...` folder support and renderer switching.
 - Stage 8.1: Maker image-pipeline runner helper.
 - Stage 8.2: Maker transparent PNG export UI / IPC integration.
+- Stage 9.1: Manual v0.1 E2E smoke checklist and source-of-truth cleanup.
 
 Latest known verification:
 
@@ -104,18 +106,15 @@ docs/workflows/codex-pr-workflow.md
 Current recommended next task:
 
 ```text
-Stage 9 - v0.1 end-to-end smoke, docs, CI/release readiness.
+Run the Stage 9.1 manual E2E smoke checklist on Windows.
+If failures appear, split fixes into small bugfix PRs.
+Then consider minimal CI and release-readiness notes.
 ```
 
-Stage 9 should include:
-
-- end-to-end Maker export -> Runtime `Load Pet...` smoke
-- source-of-truth consistency check
-- minimal CI consideration
-- release readiness notes
-
-Stage 9 should not assume installer creation or GitHub Release binaries unless
-the human explicitly confirms that release packaging is in scope.
+Stage 9 should not assume installer creation, GitHub Release binaries, release
+publishing, zip package support, rembg, cloud APIs, persistent settings, Runtime
+launching from Maker, system tray, multi-pet support, or plugin support unless
+the human explicitly confirms that scope.
 
 ---
 
@@ -975,23 +974,19 @@ This cleanup should be kept separate from feature work.
 
 ## Recommended Stage 9 Task
 
-Stage 9 should focus on v0.1 end-to-end smoke, docs, CI, and release readiness.
-
-Recommended task:
+Recommended next task:
 
 ```text
-Stage 9 - v0.1 end-to-end smoke, docs, CI/release readiness.
+Run the Stage 9.1 manual E2E smoke checklist on Windows.
+If failures appear, split fixes into small bugfix PRs.
+Then consider minimal CI and release-readiness notes.
 ```
 
-Expected Stage 9 direction:
+Stage 9.1 checklist path:
 
-- Run an end-to-end smoke from Maker export to Runtime `Load Pet...`.
-- Confirm a generated package contains `pet.json`, `spritesheet.png`, and
-  `preview.gif`.
-- Confirm Runtime can load and display that generated package.
-- Re-check README, docs, and workflow source-of-truth consistency.
-- Consider minimal CI for TypeScript build/typecheck and Python pipeline tests.
-- Write release readiness notes and remaining known limitations.
+```text
+docs/workflows/v0.1-e2e-smoke-checklist.md
+```
 
 Stage 9 should not assume installer work, GitHub Release binaries, zip package
 support, rembg, cloud APIs, persistent settings, Runtime launching from Maker,
