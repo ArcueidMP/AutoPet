@@ -33,9 +33,10 @@ The repository now includes a basic MVP for the transparent-PNG flow:
 - transparent, draggable, always-on-top Runtime window with a minimal context
   menu
 
-This is still not release-ready. Stage 9 should do an end-to-end smoke pass,
-source-of-truth consistency check, minimal CI consideration, and release
-readiness notes before any v0.1 release decision.
+AutoPet is still not a v0.1 release. Stage 9.2 manual E2E smoke has passed,
+Stage 9.3 minimal non-GUI Windows CI exists, and Stage 9.4 release-decision
+readiness notes summarize evidence for a human release decision. No tag,
+release, installer, binary, or artifact has been created.
 
 The first implementation target is Windows 10/11, developed with the Windows
 Codex App workflow in mind. The architecture should avoid unnecessary
@@ -469,8 +470,9 @@ checks and the Python image-pipeline compile/test checks.
 CI does not replace the manual Stage 9 E2E smoke checklist. It does not launch
 the Electron GUI apps or build release installers.
 
-AutoPet is still not a v0.1 release yet. Release-readiness notes are still
-pending.
+AutoPet is still not a v0.1 release yet. Release-decision readiness notes live
+in `docs/release-readiness.md`. That document is not release instructions and
+does not imply installers or GitHub Release binaries exist.
 
 ---
 
