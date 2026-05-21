@@ -460,6 +460,18 @@ corepack pnpm --filter @autopet/image-pipeline test
 .\.venv\Scripts\python.exe -m unittest discover -s packages\image-pipeline
 ```
 
+### CI
+
+The repository includes a minimal GitHub Actions workflow that validates the
+non-GUI baseline checks on Windows. It runs the TypeScript typecheck/build
+checks and the Python image-pipeline compile/test checks.
+
+CI does not replace the manual Stage 9 E2E smoke checklist. It does not launch
+the Electron GUI apps or build release installers.
+
+AutoPet is still not a v0.1 release yet. Release-readiness notes are still
+pending.
+
 ---
 
 ## Runtime Window Requirements
