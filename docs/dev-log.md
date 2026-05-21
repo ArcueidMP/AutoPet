@@ -2,7 +2,7 @@
 
 ## Current Handoff State
 
-Date: 2026-05-19
+Date: 2026-05-21
 
 AutoPet is still in the v0.1 implementation stage. This is not a v0.1 release.
 
@@ -29,8 +29,9 @@ Current handoff state:
 
 ```text
 Stage 8 is complete.
-Stage 9 has begun with a docs-only manual E2E smoke checklist and
-source-of-truth cleanup.
+Stage 9.1 added the manual E2E smoke checklist and source-of-truth cleanup.
+Stage 9.2 manual E2E smoke passed on 2026-05-21.
+Stage 9.3 is the current minimal CI workflow task.
 ```
 
 Known merged pull requests documented in this log:
@@ -51,6 +52,8 @@ PR #12: Add Runtime pet package loader helper
 PR #13: Load pet packages from local folders
 PR #14: Add Maker image pipeline runner helper
 PR #15: Export pet packages from transparent PNGs
+PR #16: Refresh source of truth after Stage 8
+PR #17: Add Stage 9 E2E smoke checklist
 ```
 
 Completed / current stages:
@@ -70,11 +73,13 @@ Completed / current stages:
 - Stage 8.1: Maker image-pipeline runner helper.
 - Stage 8.2: Maker transparent PNG export UI / IPC integration.
 - Stage 9.1: Manual v0.1 E2E smoke checklist and source-of-truth cleanup.
+- Stage 9.2: Manual Maker export to Runtime `Load Pet...` E2E smoke passed.
+- Stage 9.3: Minimal non-GUI Windows CI workflow task is current.
 
 Latest known verification:
 
 ```powershell
-corepack pnpm --filter @autopet/maker typecheck
+git diff --check
 corepack pnpm typecheck
 corepack pnpm build
 corepack pnpm --filter @autopet/image-pipeline typecheck
@@ -87,10 +92,35 @@ corepack pnpm --filter @autopet/image-pipeline test
 Result:
 
 ```text
-Passed during Stage 8 work.
-Maker manual smoke passed for opening the export form, choosing a transparent
-PNG, choosing an output folder, exporting a temporary transparent PNG, and
-generating pet.json, spritesheet.png, and preview.gif.
+Stage 9.2 manual E2E smoke passed on 2026-05-21.
+
+Environment:
+- Branch: test/stage9-e2e-smoke-run
+- Commit: 6bf3eeb
+- Node: v24.15.0
+- pnpm: 10.33.4
+- Python: 3.13.13
+
+Baseline checks passed:
+- git diff --check
+- corepack pnpm typecheck
+- corepack pnpm build
+- corepack pnpm --filter @autopet/image-pipeline typecheck
+- corepack pnpm --filter @autopet/image-pipeline test, 4 tests OK
+- .\.venv\Scripts\python.exe -m compileall packages\image-pipeline\autopet_image_pipeline
+- .\.venv\Scripts\python.exe -m unittest discover -s packages\image-pipeline, 4 tests OK
+
+Maker transparent PNG export passed and generated pet.json, spritesheet.png,
+and preview.gif outside the repository under
+%TEMP%\autopet-v0.1-e2e-smoke. The generated pet.json referenced
+spritesheet.png.
+
+Runtime launch, right-click menu, Load Pet..., generated pet display, visible
+animation advancement, drag, Reset Position, Always on Top toggle, and Exit
+passed by human manual confirmation.
+
+No bugfix PR was needed from the smoke run. Final git status --short was clean,
+and the temporary branch test/stage9-e2e-smoke-run was deleted.
 ```
 
 Current source-of-truth files for future ChatGPT / Codex threads:
@@ -101,14 +131,14 @@ AGENTS.md
 docs/dev-log.md
 docs/pet-schema.md
 docs/workflows/codex-pr-workflow.md
+docs/workflows/v0.1-e2e-smoke-checklist.md
 ```
 
 Current recommended next task:
 
 ```text
-Run the Stage 9.1 manual E2E smoke checklist on Windows.
-If failures appear, split fixes into small bugfix PRs.
-Then consider minimal CI and release-readiness notes.
+Open the Stage 9.3 minimal CI PR and confirm the GitHub Actions run is green.
+Then proceed to release-readiness notes.
 ```
 
 Stage 9 should not assume installer creation, GitHub Release binaries, release
@@ -977,9 +1007,8 @@ This cleanup should be kept separate from feature work.
 Recommended next task:
 
 ```text
-Run the Stage 9.1 manual E2E smoke checklist on Windows.
-If failures appear, split fixes into small bugfix PRs.
-Then consider minimal CI and release-readiness notes.
+Open the Stage 9.3 minimal CI PR and confirm the GitHub Actions run is green.
+Then proceed to release-readiness notes.
 ```
 
 Stage 9.1 checklist path:
