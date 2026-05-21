@@ -66,6 +66,15 @@ Stage 9.3 minimal CI:
 - `pull_request` CI run: green.
 - `main` push CI run for `7e4bd77`: green.
 
+Stage 9.4 release-readiness notes:
+
+- PR #19: `docs: add v0.1 release readiness notes`
+- Feature commit: `a0c3dd0`
+- Merge commit: `e765531`
+- `pull_request` CI run: green.
+- `main` push CI run for `e765531`: green, confirmed by the human via GitHub
+  Actions screenshot.
+
 ## CI Scope
 
 - CI validates non-GUI baseline checks on Windows.
@@ -100,7 +109,7 @@ Stage 9.3 minimal CI:
 
 ## Release Decision Checklist
 
-- [x] Source-of-truth docs updated through Stage 9.3.
+- [x] Source-of-truth docs updated through Stage 9.4.
 - [x] Manual Stage 9.2 E2E smoke passed.
 - [x] Minimal Stage 9.3 CI workflow exists.
 - [x] CI run status recorded accurately.

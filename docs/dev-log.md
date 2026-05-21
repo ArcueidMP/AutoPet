@@ -33,7 +33,10 @@ Stage 9.1 added the manual E2E smoke checklist and source-of-truth cleanup.
 Stage 9.2 manual E2E smoke passed on 2026-05-21.
 Stage 9.3 added the minimal non-GUI Windows CI workflow and was merged in
 PR #18.
-Stage 9.4 is the current v0.1 release-decision readiness notes task.
+Stage 9.4 release-decision readiness notes were merged in PR #19.
+PR #19 merge commit: e765531.
+PR #19 pull_request CI run: green.
+PR #19 main push CI run for e765531: green.
 ```
 
 Known merged pull requests documented in this log:
@@ -57,9 +60,10 @@ PR #15: Export pet packages from transparent PNGs
 PR #16: Refresh source of truth after Stage 8
 PR #17: Add Stage 9 E2E smoke checklist
 PR #18: Add Stage 9 validation workflow
+PR #19: Add v0.1 release readiness notes
 ```
 
-Completed / current stages:
+Completed stages:
 
 - Stage 1: Initial repository and v0.1 architecture scaffold.
 - Stage 2: v0.1 pet manifest schema and validator.
@@ -78,7 +82,7 @@ Completed / current stages:
 - Stage 9.1: Manual v0.1 E2E smoke checklist and source-of-truth cleanup.
 - Stage 9.2: Manual Maker export to Runtime `Load Pet...` E2E smoke passed.
 - Stage 9.3: Minimal non-GUI Windows CI workflow.
-- Stage 9.4: v0.1 release-decision readiness notes.
+- Stage 9.4: Completed v0.1 release-decision readiness notes.
 
 Latest known verification:
 
@@ -137,6 +141,16 @@ pull_request CI run: green
 main push CI run for 7e4bd77: green
 ```
 
+Stage 9.4 release-decision readiness notes were merged through PR #19:
+
+```text
+PR #19: docs: add v0.1 release readiness notes
+Feature commit: a0c3dd0
+Merge commit: e765531
+pull_request CI run: green
+main push CI run for e765531: green, confirmed by the human via GitHub Actions screenshot
+```
+
 Current source-of-truth files for future ChatGPT / Codex threads:
 
 ```text
@@ -147,14 +161,15 @@ docs/pet-schema.md
 docs/release-readiness.md
 docs/workflows/codex-pr-workflow.md
 docs/workflows/v0.1-e2e-smoke-checklist.md
+.github/workflows/ci.yml
 ```
 
 Current recommended next task:
 
 ```text
-Review the release-readiness notes.
 Make a human v0.1 release decision.
 Do not tag or publish a release unless explicitly requested by the human.
+Do not add new features before that release decision.
 ```
 
 Stage 9 should not assume installer creation, GitHub Release binaries, release
@@ -1023,9 +1038,9 @@ This cleanup should be kept separate from feature work.
 Recommended next task:
 
 ```text
-Review the release-readiness notes.
 Make a human v0.1 release decision.
 Do not tag or publish a release unless explicitly requested by the human.
+Do not add new features before that release decision.
 ```
 
 Stage 9.1 checklist path:
@@ -1056,6 +1071,7 @@ docs/pet-schema.md
 docs/release-readiness.md
 docs/workflows/codex-pr-workflow.md
 docs/workflows/v0.1-e2e-smoke-checklist.md
+.github/workflows/ci.yml
 ```
 
 Each Codex thread should handle only one small task.
