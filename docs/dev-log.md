@@ -2,7 +2,7 @@
 
 ## Current Handoff State
 
-Date: 2026-05-21
+Date: 2026-05-25
 
 AutoPet is still in the v0.1 implementation stage. This is not a v0.1 release.
 
@@ -22,21 +22,25 @@ Branch guidance:
 
 ```text
 Start future work from clean main, then create a small task-specific branch for
-the current Stage 9 subtask.
+the current Step 10 task.
 ```
 
 Current handoff state:
 
 ```text
 Stage 8 is complete.
+Stage 9 is complete through PR #20.
 Stage 9.1 added the manual E2E smoke checklist and source-of-truth cleanup.
 Stage 9.2 manual E2E smoke passed on 2026-05-21.
 Stage 9.3 added the minimal non-GUI Windows CI workflow and was merged in
 PR #18.
 Stage 9.4 release-decision readiness notes were merged in PR #19.
-PR #19 merge commit: e765531.
-PR #19 pull_request CI run: green.
-PR #19 main push CI run for e765531: green.
+Stage 9 final handoff cleanup was merged in PR #20.
+PR #20 merge commit: 51c90c2.
+Step 10 has begun.
+Stage 10.1 is Runtime Windows unpacked packaging foundation.
+This Stage 10.1 task is not a release, tag, installer, GitHub Release binary,
+or artifact publishing task.
 ```
 
 Known merged pull requests documented in this log:
@@ -61,6 +65,7 @@ PR #16: Refresh source of truth after Stage 8
 PR #17: Add Stage 9 E2E smoke checklist
 PR #18: Add Stage 9 validation workflow
 PR #19: Add v0.1 release readiness notes
+PR #20: Finalize Stage 9 handoff
 ```
 
 Completed stages:
@@ -83,6 +88,9 @@ Completed stages:
 - Stage 9.2: Manual Maker export to Runtime `Load Pet...` E2E smoke passed.
 - Stage 9.3: Minimal non-GUI Windows CI workflow.
 - Stage 9.4: Completed v0.1 release-decision readiness notes.
+- Stage 9 final handoff cleanup through PR #20.
+- Step 10 has begun.
+- Stage 10.1: Runtime Windows unpacked packaging foundation.
 
 Latest known verification:
 
@@ -161,21 +169,25 @@ docs/pet-schema.md
 docs/release-readiness.md
 docs/workflows/codex-pr-workflow.md
 docs/workflows/v0.1-e2e-smoke-checklist.md
+docs/workflows/runtime-windows-unpacked-package.md
 .github/workflows/ci.yml
 ```
 
 Current recommended next task:
 
 ```text
-Make a human v0.1 release decision.
-Do not tag or publish a release unless explicitly requested by the human.
-Do not add new features before that release decision.
+Run packaged Runtime manual smoke using
+docs/workflows/runtime-windows-unpacked-package.md.
+If it fails, split fixes into small bugfix PRs.
+Do not package Maker or publish artifacts unless explicitly requested by the
+human.
 ```
 
-Stage 9 should not assume installer creation, GitHub Release binaries, release
-publishing, zip package support, rembg, cloud APIs, persistent settings, Runtime
-launching from Maker, system tray, multi-pet support, or plugin support unless
-the human explicitly confirms that scope.
+Step 10.1 should not assume release creation, tag creation, installer creation,
+GitHub Release binaries, artifact publishing, Maker packaging, Python bundling,
+zip package support, rembg, cloud APIs, persistent settings, Runtime launching
+from Maker, system tray, multi-pet support, plugin support, or new animation
+features unless the human explicitly confirms that scope.
 
 ---
 
@@ -1033,26 +1045,29 @@ This cleanup should be kept separate from feature work.
 
 ---
 
-## Recommended Stage 9 Task
+## Recommended Step 10 Task
 
 Recommended next task:
 
 ```text
-Make a human v0.1 release decision.
-Do not tag or publish a release unless explicitly requested by the human.
-Do not add new features before that release decision.
+Run packaged Runtime manual smoke using
+docs/workflows/runtime-windows-unpacked-package.md.
+If it fails, split fixes into small bugfix PRs.
+Do not package Maker or publish artifacts unless explicitly requested by the
+human.
 ```
 
-Stage 9.1 checklist path:
+Stage 10.1 packaging smoke checklist path:
 
 ```text
-docs/workflows/v0.1-e2e-smoke-checklist.md
+docs/workflows/runtime-windows-unpacked-package.md
 ```
 
-Stage 9 should not assume installer work, GitHub Release binaries, zip package
-support, rembg, cloud APIs, persistent settings, Runtime launching from Maker,
-system tray, multi-pet support, or plugin support unless the human explicitly
-confirms that scope.
+Step 10.1 should not assume release creation, tag creation, installer work,
+GitHub Release binaries, artifact publishing, Maker packaging, Python bundling,
+zip package support, rembg, cloud APIs, persistent settings, Runtime launching
+from Maker, system tray, multi-pet support, plugin support, or new animation
+features unless the human explicitly confirms that scope.
 
 ---
 
@@ -1071,6 +1086,7 @@ docs/pet-schema.md
 docs/release-readiness.md
 docs/workflows/codex-pr-workflow.md
 docs/workflows/v0.1-e2e-smoke-checklist.md
+docs/workflows/runtime-windows-unpacked-package.md
 .github/workflows/ci.yml
 ```
 
