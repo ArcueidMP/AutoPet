@@ -461,6 +461,19 @@ corepack pnpm --filter @autopet/image-pipeline test
 .\.venv\Scripts\python.exe -m unittest discover -s packages\image-pipeline
 ```
 
+### Runtime Windows Unpacked Packaging
+
+The Runtime has a local Windows unpacked packaging command for validation:
+
+```powershell
+corepack pnpm package:runtime:win:dir
+```
+
+This produces a local unpacked Runtime build only. It does not create an
+installer, publish a GitHub Release binary, package Maker, or package Python.
+See `docs/workflows/runtime-windows-unpacked-package.md` for the smoke
+workflow.
+
 ### CI
 
 The repository includes a minimal GitHub Actions workflow that validates the

@@ -11,8 +11,16 @@ const workspaceAliases = {
 };
 
 export default defineConfig({
-  main: {},
-  preload: {},
+  main: {
+    resolve: {
+      alias: workspaceAliases
+    }
+  },
+  preload: {
+    resolve: {
+      alias: workspaceAliases
+    }
+  },
   renderer: {
     resolve: {
       alias: workspaceAliases

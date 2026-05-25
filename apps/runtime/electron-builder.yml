@@ -1,0 +1,16 @@
+appId: io.github.arcueidmp.autopet.runtime
+productName: AutoPet Runtime
+asar: true
+electronVersion: 33.4.11
+
+directories:
+  output: ../../release/runtime
+
+files:
+  - package.json
+  - out/**/*
+
+win:
+  signAndEditExecutable: false
+  target:
+    - dir
