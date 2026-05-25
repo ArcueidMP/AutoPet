@@ -58,6 +58,15 @@ animation advancement, drag, `Reset Position`, `Always on Top` toggle, and
 
 No bugfix PR was needed from the smoke run.
 
+Post-Step-9 packaging evidence:
+
+- Runtime Windows unpacked packaging exists locally after PR #22.
+- Step 10.2 packaged Runtime smoke passed.
+- External generated package load was skipped.
+- This does not create a release, tag, installer, portable exe, GitHub Release
+  binary, or artifact.
+- Human still needs to decide release, tag, and artifact scope.
+
 Stage 9.3 minimal CI:
 
 - PR #18: `ci: add stage 9 validation workflow`
