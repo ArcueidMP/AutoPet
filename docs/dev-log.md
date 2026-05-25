@@ -37,10 +37,15 @@ PR #18.
 Stage 9.4 release-decision readiness notes were merged in PR #19.
 Stage 9 final handoff cleanup was merged in PR #20.
 PR #20 merge commit: 51c90c2.
-Step 10 has begun.
-Stage 10.1 is Runtime Windows unpacked packaging foundation.
-This Stage 10.1 task is not a release, tag, installer, GitHub Release binary,
-or artifact publishing task.
+Step 10 packaging validation has begun.
+Stage 10.1 Runtime Windows unpacked packaging foundation was merged in PR #22.
+PR #22 feature commit: 5082b05.
+PR #22 merge commit: 9efbf1b.
+PR #22 checks: green / 2 passed.
+PR #22 branch packaging/runtime-win-unpacked-v2 was deleted after merge.
+Stage 10.2 packaged Runtime manual smoke passed on 2026-05-25.
+Step 10 is not a release, tag, installer, portable single exe, GitHub Release
+binary, or artifact publishing task.
 ```
 
 Known merged pull requests documented in this log:
@@ -66,6 +71,7 @@ PR #17: Add Stage 9 E2E smoke checklist
 PR #18: Add Stage 9 validation workflow
 PR #19: Add v0.1 release readiness notes
 PR #20: Finalize Stage 9 handoff
+PR #22: Add Runtime Windows unpacked build
 ```
 
 Completed stages:
@@ -91,6 +97,7 @@ Completed stages:
 - Stage 9 final handoff cleanup through PR #20.
 - Step 10 has begun.
 - Stage 10.1: Runtime Windows unpacked packaging foundation.
+- Stage 10.2: Packaged Runtime manual smoke passed.
 
 Latest known verification:
 
@@ -159,6 +166,74 @@ pull_request CI run: green
 main push CI run for e765531: green, confirmed by the human via GitHub Actions screenshot
 ```
 
+Step 10.1 Runtime Windows unpacked packaging foundation was merged through PR #22:
+
+```text
+PR #22: packaging: add runtime Windows unpacked build
+Feature commit: 5082b05
+Merge commit: 9efbf1b
+GitHub checks: green / 2 passed
+Branch packaging/runtime-win-unpacked-v2 was deleted after merge
+```
+
+Step 10.1 added the local Runtime Windows unpacked packaging foundation,
+including:
+
+```text
+package:runtime:win:dir
+apps/runtime/electron-builder.yml
+docs/workflows/runtime-windows-unpacked-package.md
+```
+
+Step 10.1 did not create an installer, portable single exe, GitHub Release
+binary, tag, release, or artifact publishing.
+
+Step 10.2 packaged Runtime manual smoke passed on 2026-05-25:
+
+```text
+OS: Windows, electron-builder reported os=10.0.26200
+Shell: PowerShell 5.1.26100.8457
+Branch: test/runtime-win-unpacked-smoke
+Commit: 9efbf1b
+Node: v24.15.0
+pnpm: 10.33.4
+electron-builder: 24.13.3
+Electron: 33.4.11, reported by electron-builder during packaging
+
+corepack pnpm install --frozen-lockfile: passed
+corepack pnpm package:runtime:win:dir: passed
+Test-Path release\runtime\win-unpacked: True
+
+Output path: release\runtime\win-unpacked
+Exe path: release\runtime\win-unpacked\AutoPet Runtime.exe
+Observed exe size: 188,784,128 bytes
+```
+
+Packaged Runtime manual checks passed by human confirmation:
+
+- Runtime exe launched.
+- Sample pet displayed.
+- Animation advanced visibly.
+- Right-click menu opened.
+- `Load Pet...` opened the folder picker.
+- Drag worked.
+- `Reset Position` worked.
+- `Always on Top` toggle worked.
+- `Exit` worked.
+
+The external generated pet package load was skipped, not failed. Release output
+remained ignored by `.gitignore` and was not committed:
+
+```text
+.gitignore:17:release/    release/runtime/win-unpacked/AutoPet Runtime.exe
+```
+
+Final `git status --short` after the packaged Runtime launch was clean, the
+temporary branch test/runtime-win-unpacked-smoke was deleted, and no release
+artifact was committed. No failures were observed. electron-builder warned that
+`apps/runtime/package.json` is missing description and author; the warning did
+not block packaging.
+
 Current source-of-truth files for future ChatGPT / Codex threads:
 
 ```text
@@ -176,18 +251,20 @@ docs/workflows/runtime-windows-unpacked-package.md
 Current recommended next task:
 
 ```text
-Run packaged Runtime manual smoke using
-docs/workflows/runtime-windows-unpacked-package.md.
-If it fails, split fixes into small bugfix PRs.
+Run a targeted packaged Runtime external generated pet package load smoke if
+additional assurance is desired, then decide whether to proceed to portable
+single exe packaging.
 Do not package Maker or publish artifacts unless explicitly requested by the
 human.
+Do not add new features before the packaging/release decision.
 ```
 
-Step 10.1 should not assume release creation, tag creation, installer creation,
-GitHub Release binaries, artifact publishing, Maker packaging, Python bundling,
-zip package support, rembg, cloud APIs, persistent settings, Runtime launching
-from Maker, system tray, multi-pet support, plugin support, or new animation
-features unless the human explicitly confirms that scope.
+Step 10 should not assume release creation, tag creation, installer creation,
+portable single exe creation, GitHub Release binaries, artifact publishing,
+Maker packaging, Python bundling, zip package support, rembg, cloud APIs,
+persistent settings, Runtime launching from Maker, system tray, multi-pet
+support, plugin support, or new animation features unless the human explicitly
+confirms that scope.
 
 ---
 
@@ -1050,11 +1127,12 @@ This cleanup should be kept separate from feature work.
 Recommended next task:
 
 ```text
-Run packaged Runtime manual smoke using
-docs/workflows/runtime-windows-unpacked-package.md.
-If it fails, split fixes into small bugfix PRs.
+Run a targeted packaged Runtime external generated pet package load smoke if
+additional assurance is desired, then decide whether to proceed to portable
+single exe packaging.
 Do not package Maker or publish artifacts unless explicitly requested by the
 human.
+Do not add new features before the packaging/release decision.
 ```
 
 Stage 10.1 packaging smoke checklist path:
@@ -1063,11 +1141,12 @@ Stage 10.1 packaging smoke checklist path:
 docs/workflows/runtime-windows-unpacked-package.md
 ```
 
-Step 10.1 should not assume release creation, tag creation, installer work,
-GitHub Release binaries, artifact publishing, Maker packaging, Python bundling,
-zip package support, rembg, cloud APIs, persistent settings, Runtime launching
-from Maker, system tray, multi-pet support, plugin support, or new animation
-features unless the human explicitly confirms that scope.
+Step 10 should not assume release creation, tag creation, installer work,
+portable single exe creation, GitHub Release binaries, artifact publishing,
+Maker packaging, Python bundling, zip package support, rembg, cloud APIs,
+persistent settings, Runtime launching from Maker, system tray, multi-pet
+support, plugin support, or new animation features unless the human explicitly
+confirms that scope.
 
 ---
 

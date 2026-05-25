@@ -43,6 +43,49 @@ release/runtime/win-unpacked/
 The unpacked directory should contain `AutoPet Runtime.exe` or an equivalent
 Runtime exe.
 
+## Latest Manual Smoke Result
+
+Step 10.2 passed on 2026-05-25.
+
+Environment:
+
+- Commit: `9efbf1b`
+- PowerShell: `5.1.26100.8457`
+- Node: `v24.15.0`
+- pnpm: `10.33.4`
+- electron-builder: `24.13.3`
+- Electron: `33.4.11`
+
+Output:
+
+```text
+release\runtime\win-unpacked
+release\runtime\win-unpacked\AutoPet Runtime.exe
+```
+
+Passed:
+
+- Package command.
+- Exe launch.
+- Sample pet display.
+- Visible animation.
+- Right-click menu.
+- `Load Pet...` folder picker.
+- Drag.
+- `Reset Position`.
+- `Always on Top` toggle.
+- `Exit`.
+
+Skipped:
+
+- External generated pet package load.
+
+Notes:
+
+- Release output was ignored.
+- No release artifact was committed.
+- The electron-builder description/author warning did not block packaging.
+
 ## Manual Smoke Checklist
 
 - [ ] Confirm the working tree is clean before packaging.
