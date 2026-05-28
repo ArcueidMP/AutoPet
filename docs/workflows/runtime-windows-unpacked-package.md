@@ -45,6 +45,43 @@ Runtime exe.
 
 ## Latest Manual Smoke Result
 
+Step 10.4 external generated package load smoke passed on 2026-05-28.
+
+Environment:
+
+- Commit: `c7ed360`
+- Generated external package path:
+  `C:\Users\AozakiAolo\AppData\Local\Temp\autopet-step10-external-package-smoke\generated-pet`
+- Runtime exe path:
+  `release\runtime\win-unpacked\AutoPet Runtime.exe`
+
+Passed:
+
+- Generated package files existed:
+  - `pet.json`
+  - `spritesheet.png`
+  - `preview.gif`
+- `pet.json` referenced `spritesheet.png`.
+- Runtime exe launched.
+- Sample pet displayed.
+- `Load Pet...` opened the folder picker.
+- Generated external package loaded.
+- Generated pet displayed.
+- Generated pet animation advanced.
+- Drag.
+- `Reset Position`.
+- `Always on Top` toggle.
+- `Exit`.
+
+Notes:
+
+- Release output was ignored.
+- No release artifact was committed.
+- No installer, portable single exe, GitHub Release binary, tag, release, or
+  artifact publishing was created.
+
+## Previous Package Command Smoke
+
 Step 10.2 passed on 2026-05-25.
 
 Environment:
@@ -76,15 +113,13 @@ Passed:
 - `Always on Top` toggle.
 - `Exit`.
 
-Skipped:
-
-- External generated pet package load.
-
 Notes:
 
 - Release output was ignored.
 - No release artifact was committed.
 - The electron-builder description/author warning did not block packaging.
+- Step 10.4 filled the external generated package load coverage that Step 10.2
+  skipped.
 
 ## Manual Smoke Checklist
 

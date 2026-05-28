@@ -2,7 +2,7 @@
 
 ## Current Handoff State
 
-Date: 2026-05-25
+Date: 2026-05-28
 
 AutoPet is still in the v0.1 implementation stage. This is not a v0.1 release.
 
@@ -44,6 +44,12 @@ PR #22 merge commit: 9efbf1b.
 PR #22 checks: green / 2 passed.
 PR #22 branch packaging/runtime-win-unpacked-v2 was deleted after merge.
 Stage 10.2 packaged Runtime manual smoke passed on 2026-05-25.
+Stage 10.2 packaged Runtime smoke was recorded in PR #23.
+PR #23 feature commit: 8ab88d1.
+PR #23 merge commit: c7ed360.
+PR #23 was merged into main.
+Stage 10.4 packaged Runtime external generated package load smoke passed on
+2026-05-28.
 Step 10 is not a release, tag, installer, portable single exe, GitHub Release
 binary, or artifact publishing task.
 ```
@@ -72,6 +78,7 @@ PR #18: Add Stage 9 validation workflow
 PR #19: Add v0.1 release readiness notes
 PR #20: Finalize Stage 9 handoff
 PR #22: Add Runtime Windows unpacked build
+PR #23: Record packaged Runtime smoke result
 ```
 
 Completed stages:
@@ -98,6 +105,7 @@ Completed stages:
 - Step 10 has begun.
 - Stage 10.1: Runtime Windows unpacked packaging foundation.
 - Stage 10.2: Packaged Runtime manual smoke passed.
+- Stage 10.4: Packaged Runtime external generated package load smoke passed.
 
 Latest known verification:
 
@@ -221,8 +229,8 @@ Packaged Runtime manual checks passed by human confirmation:
 - `Always on Top` toggle worked.
 - `Exit` worked.
 
-The external generated pet package load was skipped, not failed. Release output
-remained ignored by `.gitignore` and was not committed:
+For Step 10.2, the external generated pet package load was skipped, not
+failed. Release output remained ignored by `.gitignore` and was not committed:
 
 ```text
 .gitignore:17:release/    release/runtime/win-unpacked/AutoPet Runtime.exe
@@ -233,6 +241,67 @@ temporary branch test/runtime-win-unpacked-smoke was deleted, and no release
 artifact was committed. No failures were observed. electron-builder warned that
 `apps/runtime/package.json` is missing description and author; the warning did
 not block packaging.
+
+Step 10.4 packaged Runtime external generated package load smoke passed on
+2026-05-28:
+
+```text
+OS: Windows; exact OS version was not re-captured in this run.
+Prior packaged build environment reported Windows os=10.0.26200.
+Shell: PowerShell; exact PowerShell version was not re-captured in this run.
+Prior captured shell was PowerShell 5.1.26100.8457.
+Branch: test/runtime-packaged-external-package-smoke
+Commit: c7ed360
+Node: not re-captured in this run; prior captured Node version was v24.15.0.
+pnpm: not re-captured in this run; prior captured pnpm version was 10.33.4.
+Python: .\.venv\Scripts\python.exe; prior captured Python version was 3.13.13.
+Input PNG:
+C:\Users\AozakiAolo\AppData\Local\Temp\autopet-step10-external-package-smoke\input-transparent.png
+Generated external package:
+C:\Users\AozakiAolo\AppData\Local\Temp\autopet-step10-external-package-smoke\generated-pet
+Runtime exe:
+D:\dev\AutoPet\release\runtime\win-unpacked\AutoPet Runtime.exe
+```
+
+Generated external package checks passed:
+
+- `pet.json` existed; observed size: 852 bytes.
+- `spritesheet.png` existed; observed size: 264872 bytes.
+- `preview.gif` existed; observed size: 19476 bytes.
+- `pet.json` referenced `spritesheet.png`:
+
+```json
+"sprite": "spritesheet.png",
+```
+
+Packaged Runtime successfully loaded the generated external package through
+`Load Pet...`.
+
+Packaged Runtime manual checks passed by human confirmation:
+
+- Runtime exe launched.
+- Sample pet displayed.
+- `Load Pet...` opened the folder picker.
+- Generated external package loaded.
+- Generated pet displayed.
+- Generated pet animation advanced.
+- Drag worked.
+- `Reset Position` worked.
+- `Always on Top` toggle worked.
+- `Exit` worked.
+
+No failures were observed. Final `git status --short` after the smoke was
+clean. The smoke used a generated external package under `%TEMP%`, outside the
+repository. Release output remained ignored and was not committed:
+
+```text
+.gitignore:17:release/    release/runtime/win-unpacked/AutoPet Runtime.exe
+```
+
+The temporary branch test/runtime-packaged-external-package-smoke was deleted
+after the smoke and was at c7ed360. No release artifact was committed. No
+installer, portable single exe, GitHub Release binary, tag, release, or
+artifact publishing was created.
 
 Current source-of-truth files for future ChatGPT / Codex threads:
 
@@ -251,12 +320,9 @@ docs/workflows/runtime-windows-unpacked-package.md
 Current recommended next task:
 
 ```text
-Run a targeted packaged Runtime external generated pet package load smoke if
-additional assurance is desired, then decide whether to proceed to portable
-single exe packaging.
-Do not package Maker or publish artifacts unless explicitly requested by the
-human.
-Do not add new features before the packaging/release decision.
+Decide whether to proceed to portable single exe packaging.
+Do not package Maker, create an installer, publish artifacts, or add new
+features unless explicitly requested by the human.
 ```
 
 Step 10 should not assume release creation, tag creation, installer creation,
@@ -1127,12 +1193,9 @@ This cleanup should be kept separate from feature work.
 Recommended next task:
 
 ```text
-Run a targeted packaged Runtime external generated pet package load smoke if
-additional assurance is desired, then decide whether to proceed to portable
-single exe packaging.
-Do not package Maker or publish artifacts unless explicitly requested by the
-human.
-Do not add new features before the packaging/release decision.
+Decide whether to proceed to portable single exe packaging.
+Do not package Maker, create an installer, publish artifacts, or add new
+features unless explicitly requested by the human.
 ```
 
 Stage 10.1 packaging smoke checklist path:

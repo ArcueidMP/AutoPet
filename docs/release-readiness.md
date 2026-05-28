@@ -62,10 +62,10 @@ Post-Step-9 packaging evidence:
 
 - Runtime Windows unpacked packaging exists locally after PR #22.
 - Step 10.2 packaged Runtime smoke passed.
-- External generated package load was skipped.
-- This does not create a release, tag, installer, portable exe, GitHub Release
-  binary, or artifact.
-- Human still needs to decide release, tag, and artifact scope.
+- Step 10.4 packaged Runtime external generated package load smoke passed.
+- This still does not create a release, tag, installer, portable single exe,
+  GitHub Release binary, or artifact.
+- Human still needs to decide release, tag, artifact, and portable scope.
 
 Stage 9.3 minimal CI:
 
